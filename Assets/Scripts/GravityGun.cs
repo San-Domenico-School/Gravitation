@@ -30,6 +30,13 @@ public class GravityGun : MonoBehaviour
     [Tooltip("Maximum number of bodies that can be selected at once.")]
     public int maxSelectionCount = 20;
 
+    [Header("Visuals")]
+    [Tooltip("Visual indicator shown in selection mode (e.g., a cone).")]
+    public GameObject selectionCone;
+
+    [Tooltip("Visual indicator shown in gravity placement mode (e.g., a crosshair).")]
+    public GameObject placementCrosshair;
+
     private Mode currentMode = Mode.Selection;
     private int gravityObjectLayerMask;
 
@@ -42,18 +49,30 @@ public class GravityGun : MonoBehaviour
         {
             Debug.LogWarning("Layer 'GravityObject' not found. GravityGun raycasts will not hit anything.", this);
         }
+
+        // Set initial visuals
+        UpdateVisuals();
     }
 
     private void OnEnable()
     {
         if (Shoot != null)
+        {
             Shoot.action.performed += OnShoot;
+            Debug.Log("Shoot action subscribed");
+        }
 
         if (AltShoot != null)
+        {
             AltShoot.action.performed += OnAltShoot;
+            Debug.Log("AltShoot action subscribed");
+        }
 
         if (SwitchMode != null)
+        {
             SwitchMode.action.performed += OnSwitchMode;
+            Debug.Log("SwitchMode action subscribed");
+        }
     }
 
     private void OnDisable()
@@ -70,6 +89,7 @@ public class GravityGun : MonoBehaviour
 
     private void OnShoot(InputAction.CallbackContext ctx)
     {
+        Debug.Log("OnShoot triggered");
         switch (currentMode)
         {
             case Mode.Selection:
@@ -92,8 +112,10 @@ public class GravityGun : MonoBehaviour
 
     private void OnSwitchMode(InputAction.CallbackContext ctx)
     {
+        Debug.Log("OnSwitchMode triggered");
         currentMode = currentMode == Mode.Selection ? Mode.GravityPlacement : Mode.Selection;
         Debug.Log($"GravityGun mode switched to: {currentMode}");
+        UpdateVisuals();
     }
 
     private void TrySelectBody()
@@ -108,7 +130,14 @@ public class GravityGun : MonoBehaviour
                 return;
 
             if (!selectedBodies.Contains(body))
+            {
                 selectedBodies.Add(body);
+                Debug.Log($"Selected body: {body.name}");
+            }
+        }
+        else
+        {
+            Debug.Log("Raycast missed in selection mode");
         }
     }
 
@@ -128,13 +157,20 @@ public class GravityGun : MonoBehaviour
     private void TryPlaceGravity()
     {
         if (selectedBodies.Count == 0)
+        {
+            Debug.Log("No selected bodies for gravity placement");
             return;
+        }
 
         if (!TryRaycast(out RaycastHit hit))
+        {
+            Debug.Log("Raycast missed in gravity placement mode");
             return;
+        }
 
         Vector3 gravityDirection = -hit.normal;
         GravityController.Instance?.SetGravity(selectedBodies, gravityDirection);
+        Debug.Log($"Placed gravity at {hit.point} with direction {gravityDirection}");
     }
 
     private bool TryRaycast(out RaycastHit hit)
@@ -148,5 +184,30 @@ public class GravityGun : MonoBehaviour
         Ray ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
 
         return Physics.Raycast(ray, out hit, 100f, gravityObjectLayerMask);
+    }
+
+    private void UpdateVisuals()
+    {
+        Debug.Log($"UpdateVisuals called. Mode: {currentMode}, Cone: {(selectionCone != null ? "assigned" : "NULL")}, Crosshair: {(placementCrosshair != null ? "assigned" : "NULL")}");
+        
+        if (selectionCone != null)
+        {
+            selectionCone.SetActive(currentMode == Mode.Selection);
+            Debug.Log($"Selection cone set to: {currentMode == Mode.Selection}");
+        }
+        else
+        {
+            Debug.LogWarning("Selection cone is not assigned!");
+        }
+
+        if (placementCrosshair != null)
+        {
+            placementCrosshair.SetActive(currentMode == Mode.GravityPlacement);
+            Debug.Log($"Placement crosshair set to: {currentMode == Mode.GravityPlacement}");
+        }
+        else
+        {
+            Debug.LogWarning("Placement crosshair is not assigned!");
+        }
     }
 }

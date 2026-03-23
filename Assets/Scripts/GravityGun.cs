@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 /// <summary>
 /// Enables selecting GravityBody objects and applying a new gravity direction to them.
@@ -34,8 +35,8 @@ public class GravityGun : MonoBehaviour
     [Tooltip("Visual indicator shown in selection mode (e.g., a cone).")]
     public GameObject selectionCone;
 
-    [Tooltip("Visual indicator shown in gravity placement mode (e.g., a crosshair).")]
-    public GameObject placementCrosshair;
+    [Tooltip("Crosshair UI Image shown in placement mode.")]
+    public Image placementCrosshair;
 
     private Mode currentMode = Mode.Selection;
     private int gravityObjectLayerMask;
@@ -237,8 +238,8 @@ public class GravityGun : MonoBehaviour
         
         if (selectionCone != null)
         {
-            selectionCone.SetActive(currentMode == Mode.Selection);
-            Debug.Log($"Selection cone set to: {currentMode == Mode.Selection}");
+            selectionCone.SetActive(currentMode == Mode.GravityPlacement);
+            Debug.Log($"Selection cone set to: {currentMode == Mode.GravityPlacement}");
         }
         else
         {
@@ -247,7 +248,7 @@ public class GravityGun : MonoBehaviour
 
         if (placementCrosshair != null)
         {
-            placementCrosshair.SetActive(currentMode == Mode.GravityPlacement);
+            placementCrosshair.enabled = (currentMode == Mode.GravityPlacement);
             Debug.Log($"Placement crosshair set to: {currentMode == Mode.GravityPlacement}");
         }
         else

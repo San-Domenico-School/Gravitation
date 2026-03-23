@@ -3141,6 +3141,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3405676413817426469, guid: 50a94a24d68ad40db983838f382e7c6a, type: 3}
+      propertyPath: SelfSelect
+      value: 
+      objectReference: {fileID: 3431384409732818134, guid: eebb4f37cc9ea4e3c930094ee9cdae7e, type: 3}
+    - target: {fileID: 3405676413817426469, guid: 50a94a24d68ad40db983838f382e7c6a, type: 3}
       propertyPath: selectionCone
       value: 
       objectReference: {fileID: 1791293025}

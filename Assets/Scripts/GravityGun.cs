@@ -59,32 +59,45 @@ public class GravityGun : MonoBehaviour
         if (Shoot != null)
         {
             Shoot.action.performed += OnShoot;
-            Debug.Log("Shoot action subscribed");
+            Shoot.action.Enable();
         }
 
         if (AltShoot != null)
         {
             AltShoot.action.performed += OnAltShoot;
-            Debug.Log("AltShoot action subscribed");
+            AltShoot.action.Enable();
         }
 
         if (SwitchMode != null)
         {
             SwitchMode.action.performed += OnSwitchMode;
-            Debug.Log("SwitchMode action subscribed");
+            SwitchMode.action.Enable();
         }
+
+        Debug.Log("GravityGun input actions enabled");
     }
 
     private void OnDisable()
     {
         if (Shoot != null)
+        {
             Shoot.action.performed -= OnShoot;
+            Shoot.action.Disable();
+        }
 
         if (AltShoot != null)
+        {
             AltShoot.action.performed -= OnAltShoot;
+            AltShoot.action.Disable();
+        }
 
         if (SwitchMode != null)
+        {
             SwitchMode.action.performed -= OnSwitchMode;
+            SwitchMode.action.Disable();
+        }
+
+        Debug.Log("GravityGun input actions disabled");
     }
 
     private void OnShoot(InputAction.CallbackContext ctx)
@@ -104,10 +117,16 @@ public class GravityGun : MonoBehaviour
 
     private void OnAltShoot(InputAction.CallbackContext ctx)
     {
-        if (currentMode != Mode.Selection)
-            return;
-
-        TryDeselectBody();
+        Debug.Log("OnAltShoot triggered");
+        
+        if (currentMode == Mode.Selection)
+        {
+            TryDeselectBody();
+        }
+        else if (currentMode == Mode.GravityPlacement)
+        {
+            TryRemoveGravity();
+        }
     }
 
     private void OnSwitchMode(InputAction.CallbackContext ctx)
@@ -162,7 +181,7 @@ public class GravityGun : MonoBehaviour
             return;
         }
 
-        if (!TryRaycast(out RaycastHit hit))
+        if (!TryRaycastDirection(out RaycastHit hit))
         {
             Debug.Log("Raycast missed in gravity placement mode");
             return;
@@ -171,6 +190,18 @@ public class GravityGun : MonoBehaviour
         Vector3 gravityDirection = -hit.normal;
         GravityController.Instance?.SetGravity(selectedBodies, gravityDirection);
         Debug.Log($"Placed gravity at {hit.point} with direction {gravityDirection}");
+    }
+
+    private void TryRemoveGravity()
+    {
+        if (selectedBodies.Count == 0)
+        {
+            Debug.Log("No selected bodies to remove gravity from");
+            return;
+        }
+
+        GravityController.Instance?.SetGravity(selectedBodies, Vector3.zero);
+        Debug.Log($"Removed gravity from {selectedBodies.Count} bodies");
     }
 
     private bool TryRaycast(out RaycastHit hit)
@@ -184,6 +215,20 @@ public class GravityGun : MonoBehaviour
         Ray ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
 
         return Physics.Raycast(ray, out hit, 100f, gravityObjectLayerMask);
+    }
+
+    private bool TryRaycastDirection(out RaycastHit hit)
+    {
+        hit = default;
+
+        Camera cam = Camera.main;
+        if (cam == null)
+            return false;
+
+        Ray ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
+
+        // Raycast against all layers to find gravity direction, not just GravityObject layer
+        return Physics.Raycast(ray, out hit, 100f);
     }
 
     private void UpdateVisuals()

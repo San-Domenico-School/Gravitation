@@ -10,13 +10,22 @@ public class ArrowIndicator : MonoBehaviour
     [SerializeField]
     private float maxRaycastDistance = 100f;
 
+    [Tooltip("Reference to the GravityGun to check if we're in placement mode.")]
+    [SerializeField]
+    private GravityGun gravityGun;
+
     private void Update()
     {
+        // Only update arrow when GravityGun is in GravityPlacement mode
+        if (gravityGun == null || !gameObject.activeSelf)
+        {
+            return;
+        }
+
         // Perform a raycast from the camera to detect where gravity would be applied.
         Camera cam = Camera.main;
         if (cam == null)
         {
-            gameObject.SetActive(false);
             return;
         }
 
@@ -28,12 +37,6 @@ public class ArrowIndicator : MonoBehaviour
             Vector3 gravityDirection = -hit.normal;
             // Assuming the arrow is a cone pointing upwards, rotate so its local up points in gravity direction.
             transform.rotation = Quaternion.FromToRotation(Vector3.up, gravityDirection);
-            gameObject.SetActive(true);
-        }
-        else
-        {
-            // No hit: hide the arrow.
-            gameObject.SetActive(false);
         }
     }
 }

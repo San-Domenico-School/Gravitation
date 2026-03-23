@@ -29,8 +29,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2617189321434355937}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.7071068, y: 0, z: -0.7071068, w: 0}
-  m_LocalPosition: {x: -4.95166, y: -7, z: 4.260081}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0.7071068, w: 0}
+  m_LocalPosition: {x: -4.951661, y: -7, z: 4.260082}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1388,6 +1388,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowIndicator
   maxRaycastDistance: 100
+  gravityGun: {fileID: 0}
 --- !u!1 &6260304778613496609
 GameObject:
   m_ObjectHideFlags: 0
@@ -1612,6 +1613,8 @@ MonoBehaviour:
   SwitchMode: {fileID: -7587358385057938786, guid: eebb4f37cc9ea4e3c930094ee9cdae7e, type: 3}
   selectedBodies: []
   maxSelectionCount: 20
+  selectionCone: {fileID: 0}
+  placementCrosshair: {fileID: 0}
 --- !u!1 &8929838131158937949
 GameObject:
   m_ObjectHideFlags: 0
@@ -1776,6 +1779,7 @@ MonoBehaviour:
   jumpForce: 5
   rotationSpeed: 6
   lookSpeed: 20
+  groundCheckDistance: 0.5
 --- !u!114 &4235024976975897461
 MonoBehaviour:
   m_ObjectHideFlags: 0

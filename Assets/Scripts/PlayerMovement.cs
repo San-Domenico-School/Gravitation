@@ -153,12 +153,12 @@ public class PlayerMovement : MonoBehaviour
             }
             catch (System.Exception ex)
             {
-                Debug.LogError($"Error reading movement input: {ex.Message}");
+       //         Debug.LogError($"Error reading movement input: {ex.Message}");
             }
         }
         else if (Move != null)
         {
-            Debug.LogWarning("Move action is not enabled or null");
+       //     Debug.LogWarning("Move action is not enabled or null");
         }
 
         Vector3 moveDir = forward * moveInput.y + right * moveInput.x;
@@ -172,16 +172,16 @@ public class PlayerMovement : MonoBehaviour
         // Handle jumping - process jump request if grounded.
         if (jumpRequested)
         {
-            Debug.Log($"Processing jump request. Grounded: {isGrounded}");
+         //   Debug.Log($"Processing jump request. Grounded: {isGrounded}");
             if (isGrounded)
             {
                 rb.AddForce(-gravityDir * jumpForce, ForceMode.Impulse);
                 isGrounded = false; // Prevent double jump
-                Debug.Log("✓ Jump executed!");
+          //      Debug.Log("✓ Jump executed!");
             }
             else
             {
-                Debug.Log("✗ Jump requested but not grounded");
+          //      Debug.Log("✗ Jump requested but not grounded");
             }
             jumpRequested = false; // Clear the request regardless
         }
@@ -224,15 +224,15 @@ public class PlayerMovement : MonoBehaviour
 
         if (hit)
         {
-            Debug.Log($"✓ GROUNDED! Hit: {hitInfo.collider.gameObject.name}, Distance: {hitInfo.distance}");
+          //  Debug.Log($"✓ GROUNDED! Hit: {hitInfo.collider.gameObject.name}, Distance: {hitInfo.distance}");
         }
         else if (hitAny)
         {
-            Debug.LogError($"✗ Hit something but NOT on Ground layer! Hit: {hitInfoAny.collider.gameObject.name} (Layer: {LayerMask.LayerToName(hitInfoAny.collider.gameObject.layer)}) at distance {hitInfoAny.distance}");
+          //  Debug.LogError($"✗ Hit something but NOT on Ground layer! Hit: {hitInfoAny.collider.gameObject.name} (Layer: {LayerMask.LayerToName(hitInfoAny.collider.gameObject.layer)}) at distance {hitInfoAny.distance}");
         }
         else
         {
-            Debug.LogWarning($"✗ No hit at all. Start: {rayStart}, End: {rayEnd}, Direction: {gravityDir}, Distance: {groundCheckDistance}");
+          //  Debug.LogWarning($"✗ No hit at all. Start: {rayStart}, End: {rayEnd}, Direction: {gravityDir}, Distance: {groundCheckDistance}");
         }
     }
 }

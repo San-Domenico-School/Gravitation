@@ -24,6 +24,9 @@ public class GravityGun : MonoBehaviour
     [Tooltip("Switch between selection mode and gravity placement mode.")]
     public InputActionReference SwitchMode;
 
+    [Tooltip("Toggle player selection in selection mode.")]
+    public InputActionReference SelfSelect;
+
     [Header("Selection")]
     [Tooltip("Currently selected GravityBody objects.")]
     public List<GravityBody> selectedBodies = new List<GravityBody>(20);
@@ -75,6 +78,12 @@ public class GravityGun : MonoBehaviour
             SwitchMode.action.Enable();
         }
 
+        if (SelfSelect != null)
+        {
+            SelfSelect.action.performed += OnSelfSelect;
+            SelfSelect.action.Enable();
+        }
+
         Debug.Log("GravityGun input actions enabled");
     }
 
@@ -96,6 +105,12 @@ public class GravityGun : MonoBehaviour
         {
             SwitchMode.action.performed -= OnSwitchMode;
             SwitchMode.action.Disable();
+        }
+
+        if (SelfSelect != null)
+        {
+            SelfSelect.action.performed -= OnSelfSelect;
+            SelfSelect.action.Disable();
         }
 
         Debug.Log("GravityGun input actions disabled");
@@ -136,6 +151,48 @@ public class GravityGun : MonoBehaviour
         currentMode = currentMode == Mode.Selection ? Mode.GravityPlacement : Mode.Selection;
         Debug.Log($"GravityGun mode switched to: {currentMode}");
         UpdateVisuals();
+    }
+
+    private void OnSelfSelect(InputAction.CallbackContext ctx)
+    {
+        Debug.Log("OnSelfSelect triggered");
+        
+        if (currentMode == Mode.Selection)
+        {
+            TryTogglePlayerSelection();
+        }
+    }
+
+    private void TryTogglePlayerSelection()
+    {
+        GameObject playerObject = GameObject.FindWithTag("Player");
+        if (playerObject == null)
+        {
+            Debug.LogWarning("Player object with 'Player' tag not found.");
+            return;
+        }
+
+        GravityBody playerBody = playerObject.GetComponent<GravityBody>();
+        if (playerBody == null)
+        {
+            Debug.LogWarning("GravityBody component not found on player object.");
+            return;
+        }
+
+        if (selectedBodies.Contains(playerBody))
+        {
+            selectedBodies.Remove(playerBody);
+            Debug.Log("Player deselected");
+        }
+        else if (selectedBodies.Count < maxSelectionCount)
+        {
+            selectedBodies.Add(playerBody);
+            Debug.Log("Player selected");
+        }
+        else
+        {
+            Debug.Log("Cannot select player: max selection count reached");
+        }
     }
 
     private void TrySelectBody()

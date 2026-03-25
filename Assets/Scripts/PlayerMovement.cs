@@ -38,7 +38,6 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody rb;
     private GravityBody gravityBody;
     private Camera cam;
-    private float pitchAngle = 0f;
     private bool isGrounded = false;
     private int groundLayerMask;
     private bool jumpRequested = false;
@@ -80,11 +79,6 @@ public class PlayerMovement : MonoBehaviour
             Move.action.Enable();
     //        Debug.Log($"Move action enabled: {Move.action.enabled}");
         }
-        if (Look != null)
-        {
-            Look.action.Enable();
-     //       Debug.Log($"Look action enabled: {Look.action.enabled}");
-        }
         if (Jump != null)
         {
             Jump.action.Enable();
@@ -95,7 +89,6 @@ public class PlayerMovement : MonoBehaviour
     private void OnDisable()
     {
         if (Move != null) Move.action.Disable();
-        if (Look != null) Look.action.Disable();
         if (Jump != null) Jump.action.Disable();
     }
 
@@ -108,21 +101,7 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log("Jump input captured");
         }
 
-        // Handle look input for camera rotation.
-        if (Look != null && cam != null)
-        {
-            Vector2 lookInput = Look.action.ReadValue<Vector2>();
-            if (lookInput != Vector2.zero)
-            {
-                // Rotate player around its up (aligned with gravity) for yaw
-                transform.Rotate(transform.up, lookInput.x * lookSpeed * Time.deltaTime, Space.Self);
-
-                // Rotate camera for pitch, clamped to prevent flipping
-                pitchAngle += -lookInput.y * lookSpeed * Time.deltaTime;
-                pitchAngle = Mathf.Clamp(pitchAngle, -90f, 90f);
-                cam.transform.localEulerAngles = new Vector3(pitchAngle, 0f, 0f);
-            }
-        }
+        // All camera look input (pitch and yaw) is now handled by CameraController script
     }
 
     private void FixedUpdate()

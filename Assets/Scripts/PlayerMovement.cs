@@ -41,11 +41,15 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded = false;
     private int groundLayerMask;
     private bool jumpRequested = false;
+    private float baseMoveSpeed;
+    private float baseJumpForce;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         gravityBody = GetComponent<GravityBody>();
+        baseMoveSpeed = moveSpeed;
+        baseJumpForce = jumpForce;
         cam = Camera.main;
 
         if (cam == null)
@@ -94,6 +98,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        if (WorldInputGate.IsUIOpen)
+            return;
+
         // Capture jump input (do this in Update for consistent frame detection)
         if (Jump != null && Jump.action.triggered)
         {
@@ -106,7 +113,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (gravityBody == null || cam == null)
+        if (WorldInputGate.IsUIOpen || gravityBody == null || cam == null)
             return;
 
         Vector3 gravityDir = gravityBody.gravityDirection;
@@ -213,5 +220,14 @@ public class PlayerMovement : MonoBehaviour
         {
           //  Debug.LogWarning($"✗ No hit at all. Start: {rayStart}, End: {rayEnd}, Direction: {gravityDir}, Distance: {groundCheckDistance}");
         }
+    }
+
+    /// <summary>
+    /// Applies world-specific movement tuning while preserving the base player values.
+    /// </summary>
+    public void ApplyWorldTuning(float moveMultiplier, float jumpMultiplier)
+    {
+        moveSpeed = baseMoveSpeed * moveMultiplier;
+        jumpForce = baseJumpForce * jumpMultiplier;
     }
 }

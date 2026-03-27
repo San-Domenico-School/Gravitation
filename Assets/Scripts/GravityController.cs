@@ -102,4 +102,22 @@ public class GravityController : MonoBehaviour
             body.SetGravity(normalized, gravityStrength);
         }
     }
+
+    /// <summary>
+    /// Applies a new gravity strength to all currently registered bodies without changing direction.
+    /// </summary>
+    /// <param name="strength">The new gravity strength.</param>
+    public void ApplyGravityStrengthToActiveBodies(float strength)
+    {
+        gravityStrength = strength;
+
+        for (int i = 0; i < activeBodies.Count; i++)
+        {
+            GravityBody body = activeBodies[i];
+            if (body == null)
+                continue;
+
+            body.SetGravity(body.gravityDirection, strength);
+        }
+    }
 }

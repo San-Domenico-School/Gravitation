@@ -16,6 +16,9 @@ public class ArrowIndicator : MonoBehaviour
 
     private void Update()
     {
+        if (WorldInputGate.IsUIOpen)
+            return;
+
         // Only update arrow when GravityGun is in GravityPlacement mode
         if (gravityGun == null || !gameObject.activeSelf)
         {
@@ -40,4 +43,3 @@ public class ArrowIndicator : MonoBehaviour
         }
     }
 }
-

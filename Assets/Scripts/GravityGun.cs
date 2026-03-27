@@ -60,6 +60,8 @@ public class GravityGun : MonoBehaviour
 
     private void OnEnable()
     {
+        WorldInputGate.LockStateChanged += OnInputLockChanged;
+
         if (Shoot != null)
         {
             Shoot.action.performed += OnShoot;
@@ -89,6 +91,8 @@ public class GravityGun : MonoBehaviour
 
     private void OnDisable()
     {
+        WorldInputGate.LockStateChanged -= OnInputLockChanged;
+
         if (Shoot != null)
         {
             Shoot.action.performed -= OnShoot;
@@ -118,6 +122,9 @@ public class GravityGun : MonoBehaviour
 
     private void OnShoot(InputAction.CallbackContext ctx)
     {
+        if (WorldInputGate.IsUIOpen)
+            return;
+
         Debug.Log("OnShoot triggered");
         switch (currentMode)
         {
@@ -133,6 +140,9 @@ public class GravityGun : MonoBehaviour
 
     private void OnAltShoot(InputAction.CallbackContext ctx)
     {
+        if (WorldInputGate.IsUIOpen)
+            return;
+
         Debug.Log("OnAltShoot triggered");
         
         if (currentMode == Mode.Selection)
@@ -147,6 +157,9 @@ public class GravityGun : MonoBehaviour
 
     private void OnSwitchMode(InputAction.CallbackContext ctx)
     {
+        if (WorldInputGate.IsUIOpen)
+            return;
+
         Debug.Log("OnSwitchMode triggered");
         currentMode = currentMode == Mode.Selection ? Mode.GravityPlacement : Mode.Selection;
         Debug.Log($"GravityGun mode switched to: {currentMode}");
@@ -155,6 +168,9 @@ public class GravityGun : MonoBehaviour
 
     private void OnSelfSelect(InputAction.CallbackContext ctx)
     {
+        if (WorldInputGate.IsUIOpen)
+            return;
+
         Debug.Log("OnSelfSelect triggered");
         
         if (currentMode == Mode.Selection)
@@ -165,17 +181,10 @@ public class GravityGun : MonoBehaviour
 
     private void TryTogglePlayerSelection()
     {
-        GameObject playerObject = GameObject.FindWithTag("Player");
-        if (playerObject == null)
-        {
-            Debug.LogWarning("Player object with 'Player' tag not found.");
-            return;
-        }
-
-        GravityBody playerBody = playerObject.GetComponent<GravityBody>();
+        GravityBody playerBody = WorldSessionManagerProxy.GetPlayerBody();
         if (playerBody == null)
         {
-            Debug.LogWarning("GravityBody component not found on player object.");
+            Debug.LogWarning("Player gravity body not found.");
             return;
         }
 
@@ -202,7 +211,7 @@ public class GravityGun : MonoBehaviour
 
         if (TryRaycast(out RaycastHit hit))
         {
-            GravityBody body = hit.collider.GetComponent<GravityBody>();
+            GravityBody body = hit.collider.GetComponentInParent<GravityBody>();
             if (body == null)
                 return;
 
@@ -222,7 +231,7 @@ public class GravityGun : MonoBehaviour
     {
         if (TryRaycast(out RaycastHit hit))
         {
-            GravityBody body = hit.collider.GetComponent<GravityBody>();
+            GravityBody body = hit.collider.GetComponentInParent<GravityBody>();
             if (body == null)
                 return;
 
@@ -266,6 +275,9 @@ public class GravityGun : MonoBehaviour
     {
         hit = default;
 
+        if (WorldInputGate.IsUIOpen)
+            return false;
+
         Camera cam = Camera.main;
         if (cam == null)
             return false;
@@ -278,6 +290,9 @@ public class GravityGun : MonoBehaviour
     private bool TryRaycastDirection(out RaycastHit hit)
     {
         hit = default;
+
+        if (WorldInputGate.IsUIOpen)
+            return false;
 
         Camera cam = Camera.main;
         if (cam == null)
@@ -292,11 +307,12 @@ public class GravityGun : MonoBehaviour
     private void UpdateVisuals()
     {
         Debug.Log($"UpdateVisuals called. Mode: {currentMode}, Cone: {(selectionCone != null ? "assigned" : "NULL")}, Crosshair: {(placementCrosshair != null ? "assigned" : "NULL")}");
+        bool showPlacementVisuals = currentMode == Mode.GravityPlacement && !WorldInputGate.IsUIOpen;
         
         if (selectionCone != null)
         {
-            selectionCone.SetActive(currentMode == Mode.GravityPlacement);
-            Debug.Log($"Selection cone set to: {currentMode == Mode.GravityPlacement}");
+            selectionCone.SetActive(showPlacementVisuals);
+            Debug.Log($"Selection cone set to: {showPlacementVisuals}");
         }
         else
         {
@@ -305,12 +321,29 @@ public class GravityGun : MonoBehaviour
 
         if (placementCrosshair != null)
         {
-            placementCrosshair.enabled = (currentMode == Mode.GravityPlacement);
-            Debug.Log($"Placement crosshair set to: {currentMode == Mode.GravityPlacement}");
+            placementCrosshair.enabled = showPlacementVisuals;
+            Debug.Log($"Placement crosshair set to: {showPlacementVisuals}");
         }
         else
         {
             Debug.LogWarning("Placement crosshair is not assigned!");
+        }
+    }
+
+    private void OnInputLockChanged(bool locked)
+    {
+        UpdateVisuals();
+    }
+
+    private static class WorldSessionManagerProxy
+    {
+        public static GravityBody GetPlayerBody()
+        {
+            if (ProceduralWorldSession.Instance != null && ProceduralWorldSession.Instance.PlayerBody != null)
+                return ProceduralWorldSession.Instance.PlayerBody;
+
+            PlayerMovement playerMovement = Object.FindFirstObjectByType<PlayerMovement>();
+            return playerMovement != null ? playerMovement.GetComponent<GravityBody>() : Object.FindFirstObjectByType<GravityBody>();
         }
     }
 }

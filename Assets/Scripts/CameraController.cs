@@ -43,6 +43,9 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
+        if (WorldInputGate.IsUIOpen)
+            return;
+
         if (Look != null)
         {
             Vector2 lookInput = Look.action.ReadValue<Vector2>();

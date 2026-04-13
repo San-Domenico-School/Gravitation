@@ -102,4 +102,40 @@ public class GravityController : MonoBehaviour
             body.SetGravity(normalized, gravityStrength);
         }
     }
+
+    /// <summary>
+    /// Gets the effective gravity direction and strength at a position.
+    /// Checks if the position is inside a gravity zone; if so, returns zone gravity.
+    /// Otherwise returns the global default gravity.
+    /// </summary>
+    /// <param name="position">World position to check.</param>
+    /// <param name="direction">Output gravity direction.</param>
+    /// <param name="strength">Output gravity strength.</param>
+    public void GetEffectiveGravity(Vector3 position, out Vector3 direction, out float strength)
+    {
+        // Check if there's a gravity zone at this position.
+        GravityZone zone = GravityZoneManager.Instance?.GetZoneAtPosition(position);
+
+        if (zone != null)
+        {
+            // Use zone gravity
+            zone.GetGravityAtPosition(position, out direction, out strength);
+        }
+        else
+        {
+            // Use default global gravity
+            direction = Vector3.down;
+            strength = gravityStrength;
+        }
+    }
+
+    /// <summary>
+    /// Sets the global default gravity strength.
+    /// Used when entering a new world to set the world's base gravity.
+    /// </summary>
+    /// <param name="strength">New gravity strength value.</param>
+    public void SetGlobalGravityStrength(float strength)
+    {
+        gravityStrength = strength;
+    }
 }

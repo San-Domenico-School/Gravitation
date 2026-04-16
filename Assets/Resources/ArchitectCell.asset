@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39e96d36ad81548499cdde0f2f5bf87f, type: 3}
+  m_Name: ArchitectCell
+  m_EditorClassIdentifier: Assembly-CSharp::GravitonCell
+  cellName: ArchitectCell
+  maxCharge: 500
+  passiveRechargeRate: 3
+  icon: {fileID: 0}
+  tier: 3

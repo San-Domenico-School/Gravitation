@@ -8,6 +8,14 @@ using UnityEngine.UI;
 /// </summary>
 public class GravityGun : MonoBehaviour
 {
+    // Charge costs for gun actions
+    private const float COST_GRAVITY_APPLY = 15f;      // Cost to apply gravity to selected objects
+    private const float COST_GRAVITY_REMOVE = 8f;      // Cost to remove gravity
+    private const float COST_PLAYER_SELF = 25f;        // Additional cost when player is in selection
+    private const float COST_GRAVITY_PULSE = 30f;      // Reserved for future Gravity Pulse ability
+    private const float COST_GRAVITY_LOCK = 20f;       // Reserved for future Gravity Lock ability
+    private const float COST_CORE_RESONATOR = 60f;     // Reserved for future Core Resonator ability
+
     private enum Mode
     {
         Selection,
@@ -27,6 +35,15 @@ public class GravityGun : MonoBehaviour
     [Tooltip("Toggle player selection in selection mode.")]
     public InputActionReference SelfSelect;
 
+    [Header("Battery")]
+    [Tooltip("Reference to the battery system (typically on this same GameObject).")]
+    [SerializeField]
+    private GunBatterySystem batterySystem;
+
+    [Tooltip("Audio clip played when gun is out of charge.")]
+    [SerializeField]
+    private AudioClip outOfChargeClip;
+
     [Header("Selection")]
     [Tooltip("Currently selected GravityBody objects.")]
     public List<GravityBody> selectedBodies = new List<GravityBody>(20);
@@ -43,6 +60,8 @@ public class GravityGun : MonoBehaviour
 
     private Mode currentMode = Mode.Selection;
     private int gravityObjectLayerMask;
+    private bool isDrained = false; // Flag to avoid spamming low charge warning
+    private AudioSource audioSource;
 
     private void Awake()
     {
@@ -52,6 +71,23 @@ public class GravityGun : MonoBehaviour
         if (gravityObjectLayerMask == 0)
         {
             Debug.LogWarning("Layer 'GravityObject' not found. GravityGun raycasts will not hit anything.", this);
+        }
+
+        // Get or create AudioSource for charge cues
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+
+        // Find battery system if not assigned
+        if (batterySystem == null)
+        {
+            batterySystem = GetComponent<GunBatterySystem>();
+            if (batterySystem == null)
+            {
+                Debug.LogWarning("GunBatterySystem not found on this GameObject. Gun will not charge check.", this);
+            }
         }
 
         // Set initial visuals
@@ -118,6 +154,13 @@ public class GravityGun : MonoBehaviour
 
     private void OnShoot(InputAction.CallbackContext ctx)
     {
+        // Check if gun is disabled due to no charge
+        if (batterySystem != null && !batterySystem.HasCharge)
+        {
+            PlayOutOfChargeAudio();
+            return;
+        }
+
         Debug.Log("OnShoot triggered");
         switch (currentMode)
         {
@@ -133,6 +176,13 @@ public class GravityGun : MonoBehaviour
 
     private void OnAltShoot(InputAction.CallbackContext ctx)
     {
+        // Check if gun is disabled due to no charge (only blocks removal in placement mode)
+        if (batterySystem != null && !batterySystem.HasCharge && currentMode == Mode.GravityPlacement)
+        {
+            PlayOutOfChargeAudio();
+            return;
+        }
+
         Debug.Log("OnAltShoot triggered");
         
         if (currentMode == Mode.Selection)
@@ -147,6 +197,13 @@ public class GravityGun : MonoBehaviour
 
     private void OnSwitchMode(InputAction.CallbackContext ctx)
     {
+        // Check if gun is disabled due to no charge
+        if (batterySystem != null && !batterySystem.HasCharge)
+        {
+            PlayOutOfChargeAudio();
+            return;
+        }
+
         Debug.Log("OnSwitchMode triggered");
         currentMode = currentMode == Mode.Selection ? Mode.GravityPlacement : Mode.Selection;
         Debug.Log($"GravityGun mode switched to: {currentMode}");
@@ -245,9 +302,25 @@ public class GravityGun : MonoBehaviour
             return;
         }
 
+        // Calculate charge cost
+        float cost = COST_GRAVITY_APPLY;
+        bool playerInSelection = selectedBodies.Contains(GameObject.FindWithTag("Player")?.GetComponent<GravityBody>());
+        if (playerInSelection)
+        {
+            cost += COST_PLAYER_SELF;
+        }
+
+        // Try to spend charge
+        if (batterySystem != null && !batterySystem.TrySpendCharge(cost))
+        {
+            Debug.Log($"Insufficient charge. Required: {cost}, Available: {batterySystem.CurrentCharge}");
+            PlayOutOfChargeAudio();
+            return;
+        }
+
         Vector3 gravityDirection = -hit.normal;
         GravityController.Instance?.SetGravity(selectedBodies, gravityDirection);
-        Debug.Log($"Placed gravity at {hit.point} with direction {gravityDirection}");
+        Debug.Log($"Placed gravity at {hit.point} with direction {gravityDirection}. Spent {cost} charge.");
     }
 
     private void TryRemoveGravity()
@@ -258,8 +331,16 @@ public class GravityGun : MonoBehaviour
             return;
         }
 
+        // Try to spend charge for removal
+        if (batterySystem != null && !batterySystem.TrySpendCharge(COST_GRAVITY_REMOVE))
+        {
+            Debug.Log($"Insufficient charge. Required: {COST_GRAVITY_REMOVE}, Available: {batterySystem.CurrentCharge}");
+            PlayOutOfChargeAudio();
+            return;
+        }
+
         GravityController.Instance?.SetGravity(selectedBodies, Vector3.zero);
-        Debug.Log($"Removed gravity from {selectedBodies.Count} bodies");
+        Debug.Log($"Removed gravity from {selectedBodies.Count} bodies. Spent {COST_GRAVITY_REMOVE} charge.");
     }
 
     private bool TryRaycast(out RaycastHit hit)
@@ -311,6 +392,14 @@ public class GravityGun : MonoBehaviour
         else
         {
             Debug.LogWarning("Placement crosshair is not assigned!");
+        }
+    }
+
+    private void PlayOutOfChargeAudio()
+    {
+        if (outOfChargeClip != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(outOfChargeClip);
         }
     }
 }

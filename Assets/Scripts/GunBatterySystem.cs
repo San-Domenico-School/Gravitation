@@ -105,6 +105,18 @@ public class GunBatterySystem : MonoBehaviour
     }
 
     /// <summary>
+    /// Sets the battery charge directly and fires a charge changed event.
+    /// </summary>
+    public void SetCharge(float amount)
+    {
+        if (currentCell == null)
+            return;
+
+        currentCharge = Mathf.Clamp(amount, 0f, currentCell.MaxCharge);
+        OnChargeChanged?.Invoke(currentCharge, currentCell.MaxCharge);
+    }
+
+    /// <summary>
     /// Returns the currently equipped cell.
     /// </summary>
     public GravitonCell CurrentCell => currentCell;

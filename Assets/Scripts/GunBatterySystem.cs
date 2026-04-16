@@ -12,7 +12,7 @@ public class GunBatterySystem : MonoBehaviour
     private GravitonCell defaultCell;
 
     private GravitonCell currentCell;
-    private float currentCharge;
+    [SerializeField] private float currentCharge;
 
     /// <summary>
     /// Fired whenever charge changes. Passes (currentCharge, maxCharge).
@@ -37,12 +37,16 @@ public class GunBatterySystem : MonoBehaviour
         if (currentCell == null)
             return;
 
+        float previousCharge = currentCharge;
+
         // Apply passive recharge
         currentCharge += currentCell.PassiveRechargeRate * Time.deltaTime;
         currentCharge = Mathf.Clamp(currentCharge, 0f, currentCell.MaxCharge);
 
-        // Fire event to notify listeners (only when charge changes, small threshold to avoid spamming)
-        // Note: For efficiency, listeners should track their own previous state if they need to detect transitions
+        if (!Mathf.Approximately(previousCharge, currentCharge))
+        {
+            OnChargeChanged?.Invoke(currentCharge, currentCell.MaxCharge);
+        }
     }
 
     /// <summary>

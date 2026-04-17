@@ -1,37 +1,54 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 using TMPro;
 
 public class BatterySwapUI : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] private GameObject overlayPanel;
     [SerializeField] private Transform entryContainer;
     [SerializeField] private GameObject entryPrefab;
     [SerializeField] private TextMeshProUGUI statusText;
     [SerializeField] private GunBatterySystem gunBatterySystem;
 
+    [Header("Input Actions")]
+    [SerializeField] private InputActionReference swapBatteryAction;
+    [SerializeField] private InputActionReference cancelAction;
+
     private bool isOpen;
 
-    private void Update()
+    private void OnEnable()
     {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            if (isOpen) Close();
-            else Open();
-        }
+        swapBatteryAction.action.performed += OnSwapBatteryPressed;
+        cancelAction.action.performed += OnCancelPressed;
+    }
 
-        if (isOpen && Input.GetKeyDown(KeyCode.Escape))
-            Close();
+    private void OnDisable()
+    {
+        swapBatteryAction.action.performed -= OnSwapBatteryPressed;
+        cancelAction.action.performed -= OnCancelPressed;
+    }
+
+    private void OnSwapBatteryPressed(InputAction.CallbackContext ctx)
+    {
+        if (isOpen) Close();
+        else Open();
+    }
+
+    private void OnCancelPressed(InputAction.CallbackContext ctx)
+    {
+        if (isOpen) Close();
     }
 
     private void Open()
     {
         isOpen = true;
         overlayPanel.SetActive(true);
-        Refresh();
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+        Refresh();
     }
 
     private void Close()
@@ -105,8 +122,7 @@ public class BatterySwapUI : MonoBehaviour
 
     private ItemData FindItemDataForCell(GravitonCell cell)
     {
-        var allItems = InventorySystem.Instance.GetAllItems();
-        foreach (var slot in allItems)
+        foreach (var slot in InventorySystem.Instance.GetAllItems())
         {
             if (slot != null && slot.data.itemType == ItemType.GravitonCell && slot.data.cellData == cell)
                 return slot.data;

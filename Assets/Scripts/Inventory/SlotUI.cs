@@ -11,22 +11,15 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
     private Action<int> onClick;
     private Action<int> onHoverEnter;
     private Action<int> onHoverExit;
-    private Action<int, KeyCode> onHotkey;
 
-    private bool isHovered;
+    public bool IsHovered { get; private set; }
 
-    private static readonly KeyCode[] hotkeyKeys =
-    {
-        KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5
-    };
-
-    public void Init(int index, Action<int> clickCb, Action<int> enterCb, Action<int> exitCb, Action<int, KeyCode> hotkeyCb)
+    public void Init(int index, Action<int> clickCb, Action<int> enterCb, Action<int> exitCb)
     {
         slotIndex = index;
         onClick = clickCb;
         onHoverEnter = enterCb;
         onHoverExit = exitCb;
-        onHotkey = hotkeyCb;
     }
 
     public void SetItem(InventoryItem item)
@@ -44,17 +37,7 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         }
     }
 
-    private void Update()
-    {
-        if (!isHovered) return;
-        foreach (var key in hotkeyKeys)
-        {
-            if (Input.GetKeyDown(key))
-                onHotkey?.Invoke(slotIndex, key);
-        }
-    }
-
     public void OnPointerClick(PointerEventData eventData) => onClick?.Invoke(slotIndex);
-    public void OnPointerEnter(PointerEventData eventData) { isHovered = true; onHoverEnter?.Invoke(slotIndex); }
-    public void OnPointerExit(PointerEventData eventData) { isHovered = false; onHoverExit?.Invoke(slotIndex); }
+    public void OnPointerEnter(PointerEventData eventData) { IsHovered = true; onHoverEnter?.Invoke(slotIndex); }
+    public void OnPointerExit(PointerEventData eventData) { IsHovered = false; onHoverExit?.Invoke(slotIndex); }
 }

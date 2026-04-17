@@ -1,8 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class LootBag : MonoBehaviour
 {
+    [SerializeField] private InputActionReference interactAction;
+
     private List<InventoryItem> contents = new List<InventoryItem>();
     private Transform playerTransform;
     private bool isInRange;
@@ -12,6 +15,16 @@ public class LootBag : MonoBehaviour
     {
         var player = GameObject.FindGameObjectWithTag("Player");
         if (player != null) playerTransform = player.transform;
+    }
+
+    private void OnEnable()
+    {
+        interactAction.action.performed += OnInteract;
+    }
+
+    private void OnDisable()
+    {
+        interactAction.action.performed -= OnInteract;
     }
 
     public void Initialize(List<InventoryItem> items)
@@ -26,15 +39,21 @@ public class LootBag : MonoBehaviour
         float dist = Vector3.Distance(transform.position, playerTransform.position);
         bool nowInRange = dist <= pickupRange;
 
-        if (nowInRange != isInRange)
+        if (nowInRange && !isInRange)
         {
-            isInRange = nowInRange;
-            if (isInRange)
-                PickupPromptUI.ShowMessage("Press E to recover loot bag");
+            isInRange = true;
+            PickupPromptUI.ShowMessage("Press E to recover loot bag");
         }
+        else if (!nowInRange && isInRange)
+        {
+            isInRange = false;
+        }
+    }
 
-        if (isInRange && Input.GetKeyDown(KeyCode.E))
-            TryRecoverItems();
+    private void OnInteract(InputAction.CallbackContext ctx)
+    {
+        if (!isInRange) return;
+        TryRecoverItems();
     }
 
     private void TryRecoverItems()
@@ -50,12 +69,8 @@ public class LootBag : MonoBehaviour
         contents = remaining;
 
         if (contents.Count == 0)
-        {
             Destroy(gameObject);
-        }
         else
-        {
             PickupPromptUI.ShowMessage($"Inventory full — {contents.Count} items remain in bag.");
-        }
     }
 }

@@ -1,33 +1,33 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class ItemPickupHandler : MonoBehaviour
 {
+    [SerializeField] private InputActionReference interactAction;
+
     private readonly List<WorldItem> itemsInRange = new List<WorldItem>();
 
     private void OnEnable()
     {
         WorldItem.OnItemInRange += HandleItemInRange;
         WorldItem.OnItemOutOfRange += HandleItemOutOfRange;
+        interactAction.action.performed += OnInteract;
     }
 
     private void OnDisable()
     {
         WorldItem.OnItemInRange -= HandleItemInRange;
         WorldItem.OnItemOutOfRange -= HandleItemOutOfRange;
+        interactAction.action.performed -= OnInteract;
     }
 
     private void HandleItemInRange(WorldItem item) => itemsInRange.Add(item);
-
     private void HandleItemOutOfRange(WorldItem item) => itemsInRange.Remove(item);
 
-    private void Update()
+    private void OnInteract(InputAction.CallbackContext ctx)
     {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            WorldItem closest = GetClosest();
-            closest?.TryPickup();
-        }
+        GetClosest()?.TryPickup();
     }
 
     private WorldItem GetClosest()

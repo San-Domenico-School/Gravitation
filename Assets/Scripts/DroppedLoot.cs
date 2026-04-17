@@ -1,12 +1,10 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Stubbed loot drop handler for player death. Spawns a loot bag at the death location.
-/// </summary>
 public class DroppedLoot : MonoBehaviour
 {
     [SerializeField]
-    [Tooltip("Prefab used to spawn the loot bag. Leave unassigned until the LootBag prefab exists.")]
+    [Tooltip("Prefab used to spawn the loot bag. Must have a LootBag component.")]
     private GameObject lootBagPrefab;
 
     public void SpawnLootBag(Vector3 position)
@@ -17,12 +15,26 @@ public class DroppedLoot : MonoBehaviour
             return;
         }
 
-        GameObject lootBag = Instantiate(lootBagPrefab, position, Quaternion.identity);
-        if (lootBag.GetComponent<Rigidbody>() == null)
+        InventoryItem[] allSlots = InventorySystem.Instance.GetAllItems();
+        var itemsToTransfer = new List<InventoryItem>();
+        foreach (var slot in allSlots)
         {
-            lootBag.AddComponent<Rigidbody>();
+            if (slot != null) itemsToTransfer.Add(slot);
         }
 
-        // TODO: When inventory system is built, transfer player's held items into this loot bag on spawn.
+        InventorySystem.Instance.ClearAllItems();
+        HotbarSystem.Instance.ClearAllHotbar();
+
+        GameObject lootBagGO = Instantiate(lootBagPrefab, position, Quaternion.identity);
+
+        var lootBag = lootBagGO.GetComponent<LootBag>();
+        if (lootBag != null)
+        {
+            lootBag.Initialize(itemsToTransfer);
+        }
+        else
+        {
+            Debug.LogWarning("LootBag prefab is missing a LootBag component.");
+        }
     }
 }

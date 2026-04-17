@@ -520,7 +520,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c827266e6360d4a1f958f40a93711c30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldItem
-  itemData: {fileID: 0}
+  itemData: {fileID: 11400000, guid: 9d048d8dbbc7041f1aa5533ad773a3b1, type: 2}
   pickupRange: 2.5
 --- !u!65 &85965329
 BoxCollider:
@@ -609,7 +609,7 @@ Transform:
   m_GameObject: {fileID: 85965327}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.34, y: -5.21076, z: 1.13}
+  m_LocalPosition: {x: 5.36, y: -5.21076, z: 3.19}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -2244,7 +2244,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &894496845
 RectTransform:
   m_ObjectHideFlags: 0

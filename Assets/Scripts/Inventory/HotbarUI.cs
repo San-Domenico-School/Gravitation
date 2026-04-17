@@ -16,12 +16,17 @@ public class HotbarUI : MonoBehaviour
 
     private void OnEnable()
     {
-        HotbarSystem.Instance.OnHotbarChanged += Refresh;
         hotbar1Action.action.performed += OnHotbar1;
         hotbar2Action.action.performed += OnHotbar2;
         hotbar3Action.action.performed += OnHotbar3;
         hotbar4Action.action.performed += OnHotbar4;
         hotbar5Action.action.performed += OnHotbar5;
+    }
+
+    private void Start()
+    {
+        HotbarSystem.Instance.OnHotbarChanged += Refresh;
+        Refresh();
     }
 
     private void OnDisable()
@@ -33,8 +38,6 @@ public class HotbarUI : MonoBehaviour
         hotbar4Action.action.performed -= OnHotbar4;
         hotbar5Action.action.performed -= OnHotbar5;
     }
-
-    private void Start() => Refresh();
 
     private void OnHotbar1(InputAction.CallbackContext ctx) => SelectSlot(0);
     private void OnHotbar2(InputAction.CallbackContext ctx) => SelectSlot(1);

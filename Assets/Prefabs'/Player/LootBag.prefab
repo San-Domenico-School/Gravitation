@@ -126,6 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99ba5e9ffe8cf4e12ba2c6201157542e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LootBag
+  interactAction: {fileID: -6060219723536290139, guid: eebb4f37cc9ea4e3c930094ee9cdae7e, type: 3}
 --- !u!54 &358748021319496758
 Rigidbody:
   m_ObjectHideFlags: 0

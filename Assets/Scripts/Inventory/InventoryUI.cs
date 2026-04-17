@@ -15,6 +15,7 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private GameObject tooltip;
     [SerializeField] private TextMeshProUGUI tooltipName;
     [SerializeField] private TextMeshProUGUI tooltipDesc;
+    [SerializeField] private PlayerInput playerInput;
 
     [Header("Input Actions")]
     [SerializeField] private InputActionReference toggleInventoryAction;
@@ -24,17 +25,11 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private InputActionReference hotbar4Action;
     [SerializeField] private InputActionReference hotbar5Action;
 
-    [Header("Action Maps to Suppress While Open")]
-    [SerializeField] private InputActionAsset inputActions;
-
     private const int SlotCount = 48;
     private SlotUI[] slotUIs;
     private bool isOpen;
     private int dragSourceSlot = -1;
     private int hoveredSlotIndex = -1;
-
-    private InputActionMap playerMap;
-    private InputActionMap gravityGunMap;
 
     private void Awake()
     {
@@ -50,33 +45,35 @@ public class InventoryUI : MonoBehaviour
         if (tooltip != null) tooltip.SetActive(false);
         if (cursorIcon != null) cursorIcon.gameObject.SetActive(false);
         if (inventoryPanel != null) inventoryPanel.SetActive(false);
-
-        if (inputActions != null)
-        {
-            playerMap = inputActions.FindActionMap("Player");
-            gravityGunMap = inputActions.FindActionMap("GravityGun");
-        }
     }
 
     private void OnEnable()
     {
+        toggleInventoryAction.action.performed += OnToggleInventory;
+        hotbar1Action.action.performed += OnHotbar1;
+        hotbar2Action.action.performed += OnHotbar2;
+        hotbar3Action.action.performed += OnHotbar3;
+        hotbar4Action.action.performed += OnHotbar4;
+        hotbar5Action.action.performed += OnHotbar5;
+    }
+
+    private void Start()
+    {
         InventorySystem.Instance.OnInventoryChanged += Refresh;
         HotbarSystem.Instance.OnHotbarChanged += Refresh;
-
-        toggleInventoryAction.action.performed += OnToggleInventory;
-        hotbar1Action.action.performed += ctx => TryAssignHotbar(0);
-        hotbar2Action.action.performed += ctx => TryAssignHotbar(1);
-        hotbar3Action.action.performed += ctx => TryAssignHotbar(2);
-        hotbar4Action.action.performed += ctx => TryAssignHotbar(3);
-        hotbar5Action.action.performed += ctx => TryAssignHotbar(4);
     }
 
     private void OnDisable()
     {
+        toggleInventoryAction.action.performed -= OnToggleInventory;
+        hotbar1Action.action.performed -= OnHotbar1;
+        hotbar2Action.action.performed -= OnHotbar2;
+        hotbar3Action.action.performed -= OnHotbar3;
+        hotbar4Action.action.performed -= OnHotbar4;
+        hotbar5Action.action.performed -= OnHotbar5;
+
         if (InventorySystem.Instance != null) InventorySystem.Instance.OnInventoryChanged -= Refresh;
         if (HotbarSystem.Instance != null) HotbarSystem.Instance.OnHotbarChanged -= Refresh;
-
-        toggleInventoryAction.action.performed -= OnToggleInventory;
     }
 
     private void OnToggleInventory(InputAction.CallbackContext ctx)
@@ -84,6 +81,12 @@ public class InventoryUI : MonoBehaviour
         if (isOpen) CloseInventory();
         else OpenInventory();
     }
+
+    private void OnHotbar1(InputAction.CallbackContext ctx) => TryAssignHotbar(0);
+    private void OnHotbar2(InputAction.CallbackContext ctx) => TryAssignHotbar(1);
+    private void OnHotbar3(InputAction.CallbackContext ctx) => TryAssignHotbar(2);
+    private void OnHotbar4(InputAction.CallbackContext ctx) => TryAssignHotbar(3);
+    private void OnHotbar5(InputAction.CallbackContext ctx) => TryAssignHotbar(4);
 
     private void TryAssignHotbar(int index)
     {
@@ -100,8 +103,12 @@ public class InventoryUI : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        playerMap?.Disable();
-        gravityGunMap?.Disable();
+        // Disable gameplay maps so movement/camera stop while inventory is open
+        playerInput?.actions.FindActionMap("Player").Disable();
+        playerInput?.actions.FindActionMap("GravityGun").Disable();
+
+        // Re-enable just the inventory toggle so Tab can still close it
+        toggleInventoryAction.action.Enable();
 
         Refresh();
     }
@@ -116,8 +123,8 @@ public class InventoryUI : MonoBehaviour
         Cursor.visible = false;
         if (tooltip != null) tooltip.SetActive(false);
 
-        playerMap?.Enable();
-        gravityGunMap?.Enable();
+        playerInput?.actions.FindActionMap("Player").Enable();
+        playerInput?.actions.FindActionMap("GravityGun").Enable();
     }
 
     private void Update()

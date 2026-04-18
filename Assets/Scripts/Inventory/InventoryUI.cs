@@ -37,6 +37,7 @@ public class InventoryUI : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        Debug.Log("[InventoryUI] Awake");
         slotUIs = new SlotUI[SlotCount];
         for (int i = 0; i < SlotCount; i++)
         {
@@ -73,6 +74,7 @@ public class InventoryUI : MonoBehaviour
 
     private void OnToggleInventory(InputAction.CallbackContext ctx)
     {
+        Debug.Log("[InventoryUI] Tab pressed");
         if (isOpen) CloseInventory();
         else OpenInventory();
     }
@@ -140,6 +142,7 @@ public class InventoryUI : MonoBehaviour
 
     private void OnSlotClicked(int slotIndex)
     {
+        Debug.Log($"[InventoryUI] Slot {slotIndex} clicked");
         if (dragSourceSlot < 0)
         {
             var item = InventorySystem.Instance.GetItemInSlot(slotIndex);

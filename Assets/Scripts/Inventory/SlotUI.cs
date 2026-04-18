@@ -15,6 +15,18 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
 
     public bool IsHovered { get; private set; }
 
+    private void Awake()
+    {
+        // Guarantee this slot always intercepts raycasts even when the icon image is hidden
+        var bg = GetComponent<Image>();
+        if (bg == null)
+        {
+            bg = gameObject.AddComponent<Image>();
+            bg.color = Color.clear;
+        }
+        bg.raycastTarget = true;
+    }
+
     public void Init(int index, Action<int> clickCb, Action<int> rightClickCb, Action<int> enterCb, Action<int> exitCb)
     {
         slotIndex = index;

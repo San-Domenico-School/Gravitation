@@ -9,15 +9,17 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
 
     private int slotIndex;
     private Action<int> onClick;
+    private Action<int> onRightClick;
     private Action<int> onHoverEnter;
     private Action<int> onHoverExit;
 
     public bool IsHovered { get; private set; }
 
-    public void Init(int index, Action<int> clickCb, Action<int> enterCb, Action<int> exitCb)
+    public void Init(int index, Action<int> clickCb, Action<int> rightClickCb, Action<int> enterCb, Action<int> exitCb)
     {
         slotIndex = index;
         onClick = clickCb;
+        onRightClick = rightClickCb;
         onHoverEnter = enterCb;
         onHoverExit = exitCb;
     }
@@ -37,7 +39,13 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         }
     }
 
-    public void OnPointerClick(PointerEventData eventData) => onClick?.Invoke(slotIndex);
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Left)
+            onClick?.Invoke(slotIndex);
+        else if (eventData.button == PointerEventData.InputButton.Right)
+            onRightClick?.Invoke(slotIndex);
+    }
     public void OnPointerEnter(PointerEventData eventData) { IsHovered = true; onHoverEnter?.Invoke(slotIndex); }
     public void OnPointerExit(PointerEventData eventData) { IsHovered = false; onHoverExit?.Invoke(slotIndex); }
 }

@@ -7,6 +7,8 @@ using TMPro;
 
 public class InventoryUI : MonoBehaviour
 {
+    public static InventoryUI Instance { get; private set; }
+
     [Header("References")]
     [SerializeField] private GameObject inventoryPanel;
     [SerializeField] private Transform slotContainer;
@@ -30,16 +32,18 @@ public class InventoryUI : MonoBehaviour
     private bool isOpen;
     private int dragSourceSlot = -1;
     private int hoveredSlotIndex = -1;
+    private Transform playerTransform;
 
     private void Awake()
     {
+        Instance = this;
         slotUIs = new SlotUI[SlotCount];
         for (int i = 0; i < SlotCount; i++)
         {
             var go = Instantiate(slotPrefab, slotContainer);
             slotUIs[i] = go.GetComponent<SlotUI>();
             int captured = i;
-            slotUIs[i].Init(captured, OnSlotClicked, OnSlotHoverEnter, OnSlotHoverExit);
+            slotUIs[i].Init(captured, OnSlotClicked, OnSlotRightClicked, OnSlotHoverEnter, OnSlotHoverExit);
         }
 
         if (tooltip != null) tooltip.SetActive(false);
@@ -50,28 +54,19 @@ public class InventoryUI : MonoBehaviour
     private void OnEnable()
     {
         toggleInventoryAction.action.performed += OnToggleInventory;
-        hotbar1Action.action.performed += OnHotbar1;
-        hotbar2Action.action.performed += OnHotbar2;
-        hotbar3Action.action.performed += OnHotbar3;
-        hotbar4Action.action.performed += OnHotbar4;
-        hotbar5Action.action.performed += OnHotbar5;
     }
 
     private void Start()
     {
         InventorySystem.Instance.OnInventoryChanged += Refresh;
         HotbarSystem.Instance.OnHotbarChanged += Refresh;
+        var player = GameObject.FindWithTag("Player");
+        if (player != null) playerTransform = player.transform;
     }
 
     private void OnDisable()
     {
         toggleInventoryAction.action.performed -= OnToggleInventory;
-        hotbar1Action.action.performed -= OnHotbar1;
-        hotbar2Action.action.performed -= OnHotbar2;
-        hotbar3Action.action.performed -= OnHotbar3;
-        hotbar4Action.action.performed -= OnHotbar4;
-        hotbar5Action.action.performed -= OnHotbar5;
-
         if (InventorySystem.Instance != null) InventorySystem.Instance.OnInventoryChanged -= Refresh;
         if (HotbarSystem.Instance != null) HotbarSystem.Instance.OnHotbarChanged -= Refresh;
     }
@@ -82,15 +77,9 @@ public class InventoryUI : MonoBehaviour
         else OpenInventory();
     }
 
-    private void OnHotbar1(InputAction.CallbackContext ctx) => TryAssignHotbar(0);
-    private void OnHotbar2(InputAction.CallbackContext ctx) => TryAssignHotbar(1);
-    private void OnHotbar3(InputAction.CallbackContext ctx) => TryAssignHotbar(2);
-    private void OnHotbar4(InputAction.CallbackContext ctx) => TryAssignHotbar(3);
-    private void OnHotbar5(InputAction.CallbackContext ctx) => TryAssignHotbar(4);
-
     private void TryAssignHotbar(int index)
     {
-        if (!isOpen || hoveredSlotIndex < 0) return;
+        if (hoveredSlotIndex < 0) return;
         var item = InventorySystem.Instance.GetItemInSlot(hoveredSlotIndex);
         if (item != null) HotbarSystem.Instance.AssignToHotbar(index, item);
     }
@@ -107,7 +96,7 @@ public class InventoryUI : MonoBehaviour
         playerInput?.actions.FindActionMap("Player").Disable();
         playerInput?.actions.FindActionMap("GravityGun").Disable();
 
-        // Re-enable just the inventory toggle so Tab can still close it
+        // Re-enable inventory toggle so Tab can still close it
         toggleInventoryAction.action.Enable();
 
         Refresh();
@@ -129,12 +118,14 @@ public class InventoryUI : MonoBehaviour
 
     private void Update()
     {
-        if (!isOpen || dragSourceSlot < 0 || cursorIcon == null) return;
+        if (!isOpen) return;
 
-        cursorIcon.rectTransform.position = Mouse.current.position.ReadValue();
-
-        if (Mouse.current.leftButton.wasPressedThisFrame && !IsPointerOverSlot())
-            CancelDrag();
+        if (dragSourceSlot >= 0 && cursorIcon != null)
+        {
+            cursorIcon.rectTransform.position = Mouse.current.position.ReadValue();
+            if (Mouse.current.leftButton.wasPressedThisFrame && !IsPointerOverSlot())
+                CancelDrag();
+        }
     }
 
     private void Refresh()
@@ -212,5 +203,44 @@ public class InventoryUI : MonoBehaviour
             tooltip.SetActive(true);
             tooltip.transform.position = (Vector3)pos + new Vector3(10, -10, 0);
         }
+    }
+
+    public bool TryAssignDraggedToHotbar(int hotbarIndex)
+    {
+        if (dragSourceSlot < 0) return false;
+        var item = InventorySystem.Instance.GetItemInSlot(dragSourceSlot);
+        if (item == null) return false;
+
+        HotbarSystem.Instance.AssignToHotbar(hotbarIndex, item);
+        dragSourceSlot = -1;
+        if (cursorIcon != null) cursorIcon.gameObject.SetActive(false);
+        Refresh();
+        return true;
+    }
+
+    private void OnSlotRightClicked(int slotIndex)
+    {
+        if (dragSourceSlot >= 0) return;
+        var item = InventorySystem.Instance.GetItemInSlot(slotIndex);
+        if (item == null) return;
+        DropItem(item);
+    }
+
+    private void DropItem(InventoryItem item)
+    {
+        if (item.data.worldPrefab == null)
+        {
+            PickupPromptUI.ShowMessage($"{item.data.itemName} cannot be dropped.");
+            return;
+        }
+
+        Vector3 spawnPos = playerTransform != null
+            ? playerTransform.position + playerTransform.forward * 1.5f
+            : Vector3.zero;
+
+        Object.Instantiate(item.data.worldPrefab, spawnPos, Quaternion.identity);
+        InventorySystem.Instance.TryRemoveItem(item.uniqueInstanceId);
+        if (tooltip != null) tooltip.SetActive(false);
+        Refresh();
     }
 }

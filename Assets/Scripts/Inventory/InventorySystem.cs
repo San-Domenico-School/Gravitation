@@ -51,6 +51,13 @@ public class InventorySystem : MonoBehaviour
         return false;
     }
 
+    public bool HasItemWithData(ItemData data)
+    {
+        foreach (var slot in slots)
+            if (slot != null && slot.data == data) return true;
+        return false;
+    }
+
     public bool HasItemOfType(ItemType type)
     {
         foreach (var slot in slots)

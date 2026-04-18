@@ -8,6 +8,18 @@ public class HotbarSystem : MonoBehaviour
     private InventoryItem[] hotbarSlots = new InventoryItem[5];
 
     public event Action OnHotbarChanged;
+    public event Action OnSelectionChanged;
+
+    public int SelectedIndex { get; private set; } = 0;
+
+    public void SelectSlot(int index)
+    {
+        if (index < 0 || index >= hotbarSlots.Length) return;
+        SelectedIndex = index;
+        OnSelectionChanged?.Invoke();
+    }
+
+    public InventoryItem GetSelectedItem() => GetHotbarItem(SelectedIndex);
 
     private void Awake()
     {

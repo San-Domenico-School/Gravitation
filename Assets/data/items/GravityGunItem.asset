@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 34b61a0247d3c4f8ebb99d0ef93be75a, type: 3}
-  m_Name: IronDeposit
+  m_Name: GravityGunItem
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemName: IronDeposit
-  itemType: 0
-  icon: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  description: a deposit of natural iron
-  isUnique: 0
+  itemName: Gravity Gun
+  itemType: 3
+  icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  description: grav gun
+  isUnique: 1
   cellData: {fileID: 0}
+  worldPrefab: {fileID: 2359901827063442387, guid: e68421897850a4a8fbf5d363f7e225db, type: 3}

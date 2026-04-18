@@ -52,7 +52,7 @@ public class WorldItem : MonoBehaviour
     {
         if (itemData == null) return;
 
-        if (itemData.isUnique && InventorySystem.Instance.HasItemOfType(itemData.itemType))
+        if (itemData.isUnique && InventorySystem.Instance.HasItemWithData(itemData))
         {
             PickupPromptUI.ShowMessage("Already carrying this unique item.");
             return;

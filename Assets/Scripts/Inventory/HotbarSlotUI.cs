@@ -14,6 +14,13 @@ public class HotbarSlotUI : MonoBehaviour, IPointerClickHandler
     private Action<int> onLeftClick;
     private Action<int> onRightClick;
 
+    private void Awake()
+    {
+        var bg = GetComponent<Image>();
+        if (bg == null) { bg = gameObject.AddComponent<Image>(); bg.color = Color.clear; }
+        bg.raycastTarget = true;
+    }
+
     public void Init(int index, Action<int> leftClickCb, Action<int> rightClickCb)
     {
         slotIndex = index;
@@ -23,6 +30,7 @@ public class HotbarSlotUI : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        Debug.Log($"[HotbarSlotUI] Click slot={slotIndex} button={eventData.button}");
         if (eventData.button == PointerEventData.InputButton.Left)
             onLeftClick?.Invoke(slotIndex);
         else if (eventData.button == PointerEventData.InputButton.Right)
@@ -32,19 +40,17 @@ public class HotbarSlotUI : MonoBehaviour, IPointerClickHandler
     public void SetItem(InventoryItem item, int number)
     {
         if (slotNumber != null) slotNumber.text = number.ToString();
-
-        if (iconImage != null)
+        if (iconImage == null) return;
+        iconImage.enabled = true;
+        if (item != null && item.data.icon != null)
         {
-            if (item != null && item.data.icon != null)
-            {
-                iconImage.sprite = item.data.icon;
-                iconImage.enabled = true;
-            }
-            else
-            {
-                iconImage.sprite = null;
-                iconImage.enabled = false;
-            }
+            iconImage.sprite = item.data.icon;
+            iconImage.color = Color.white;
+        }
+        else
+        {
+            iconImage.sprite = null;
+            iconImage.color = Color.clear;
         }
     }
 

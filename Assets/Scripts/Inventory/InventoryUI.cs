@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -27,6 +28,8 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private InputActionReference hotbar4Action;
     [SerializeField] private InputActionReference hotbar5Action;
 
+    public bool IsOpen => isOpen;
+
     private const int SlotCount = 48;
     private SlotUI[] slotUIs;
     private bool isOpen;
@@ -37,7 +40,6 @@ public class InventoryUI : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        Debug.Log("[InventoryUI] Awake");
         slotUIs = new SlotUI[SlotCount];
         for (int i = 0; i < SlotCount; i++)
         {
@@ -74,16 +76,18 @@ public class InventoryUI : MonoBehaviour
 
     private void OnToggleInventory(InputAction.CallbackContext ctx)
     {
-        Debug.Log("[InventoryUI] Tab pressed");
         if (isOpen) CloseInventory();
         else OpenInventory();
     }
 
-    private void TryAssignHotbar(int index)
+    public void TryAssignHovered(int hotbarIndex)
     {
+        Debug.Log($"[InventoryUI] TryAssignHovered hotbarIndex={hotbarIndex} hoveredSlot={hoveredSlotIndex}");
         if (hoveredSlotIndex < 0) return;
         var item = InventorySystem.Instance.GetItemInSlot(hoveredSlotIndex);
-        if (item != null) HotbarSystem.Instance.AssignToHotbar(index, item);
+        Debug.Log($"[InventoryUI] TryAssignHovered item={item?.data?.itemName ?? "null"}");
+        if (item != null)
+            HotbarSystem.Instance.AssignToHotbar(hotbarIndex, item);
     }
 
     private void OpenInventory()
@@ -94,12 +98,8 @@ public class InventoryUI : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // Disable gameplay maps so movement/camera stop while inventory is open
-        playerInput?.actions.FindActionMap("Player").Disable();
-        playerInput?.actions.FindActionMap("GravityGun").Disable();
-
-        // Re-enable inventory toggle so Tab can still close it
-        toggleInventoryAction.action.Enable();
+        // timeScale=0 freezes movement and camera (both use Time.deltaTime).
+        // We do NOT disable action maps — that kills InputSystemUIInputModule's click detection.
 
         Refresh();
     }
@@ -114,19 +114,55 @@ public class InventoryUI : MonoBehaviour
         Cursor.visible = false;
         if (tooltip != null) tooltip.SetActive(false);
 
-        playerInput?.actions.FindActionMap("Player").Enable();
-        playerInput?.actions.FindActionMap("GravityGun").Enable();
     }
 
     private void Update()
     {
         if (!isOpen) return;
 
+        PollHoveredSlot();
+
         if (dragSourceSlot >= 0 && cursorIcon != null)
         {
             cursorIcon.rectTransform.position = Mouse.current.position.ReadValue();
             if (Mouse.current.leftButton.wasPressedThisFrame && !IsPointerOverSlot())
                 CancelDrag();
+        }
+    }
+
+    private readonly List<RaycastResult> _raycastResults = new List<RaycastResult>();
+
+    private void PollHoveredSlot()
+    {
+        _raycastResults.Clear();
+        var pointerData = new PointerEventData(EventSystem.current)
+            { position = Mouse.current.position.ReadValue() };
+        EventSystem.current.RaycastAll(pointerData, _raycastResults);
+
+        int newHovered = -1;
+        foreach (var result in _raycastResults)
+        {
+            var slot = result.gameObject.GetComponent<SlotUI>();
+            if (slot == null) slot = result.gameObject.GetComponentInParent<SlotUI>();
+            if (slot != null)
+            {
+                for (int i = 0; i < slotUIs.Length; i++)
+                {
+                    if (slotUIs[i] == slot) { newHovered = i; break; }
+                }
+                break;
+            }
+        }
+
+        if (newHovered != hoveredSlotIndex)
+        {
+            hoveredSlotIndex = newHovered;
+            Debug.Log($"[InventoryUI] Hovered slot={hoveredSlotIndex}");
+            if (hoveredSlotIndex < 0 || tooltip == null) return;
+            var item = InventorySystem.Instance.GetItemInSlot(hoveredSlotIndex);
+            StopAllCoroutines();
+            if (item != null) StartCoroutine(ShowTooltipDelayed(item, Mouse.current.position.ReadValue()));
+            else tooltip.SetActive(false);
         }
     }
 
@@ -142,7 +178,7 @@ public class InventoryUI : MonoBehaviour
 
     private void OnSlotClicked(int slotIndex)
     {
-        Debug.Log($"[InventoryUI] Slot {slotIndex} clicked");
+        Debug.Log($"[InventoryUI] OnSlotClicked slot={slotIndex} dragActive={dragSourceSlot >= 0}");
         if (dragSourceSlot < 0)
         {
             var item = InventorySystem.Instance.GetItemInSlot(slotIndex);
@@ -178,23 +214,8 @@ public class InventoryUI : MonoBehaviour
     private bool IsPointerOverSlot() =>
         EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
 
-    private void OnSlotHoverEnter(int slotIndex)
-    {
-        hoveredSlotIndex = slotIndex;
-        var item = InventorySystem.Instance.GetItemInSlot(slotIndex);
-        if (item != null && tooltip != null)
-        {
-            StopAllCoroutines();
-            StartCoroutine(ShowTooltipDelayed(item, Mouse.current.position.ReadValue()));
-        }
-    }
-
-    private void OnSlotHoverExit(int slotIndex)
-    {
-        if (hoveredSlotIndex == slotIndex) hoveredSlotIndex = -1;
-        StopAllCoroutines();
-        if (tooltip != null) tooltip.SetActive(false);
-    }
+    private void OnSlotHoverEnter(int slotIndex) { }
+    private void OnSlotHoverExit(int slotIndex) { }
 
     private IEnumerator ShowTooltipDelayed(InventoryItem item, Vector2 pos)
     {

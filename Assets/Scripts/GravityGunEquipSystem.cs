@@ -10,9 +10,7 @@ public class GravityGunEquipSystem : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log($"[GravityGunEquip] Start — gun={gravityGun != null}, itemData={gravityGunItemData != null}");
-        if (gravityGun != null) gravityGun.enabled = false;
-
+        Debug.Log($"[GravityGunEquip] Start — gun={gravityGun != null}, itemData={gravityGunItemData != null}, gun.go.active={gravityGun?.gameObject.activeInHierarchy}, gun.enabled={gravityGun?.enabled}");
         HotbarSystem.Instance.OnHotbarChanged += UpdateEquipState;
         HotbarSystem.Instance.OnSelectionChanged += UpdateEquipState;
         InventorySystem.Instance.OnInventoryChanged += UpdateEquipState;
@@ -32,14 +30,12 @@ public class GravityGunEquipSystem : MonoBehaviour
 
     private void UpdateEquipState()
     {
-        if (gravityGun == null)   { Debug.LogWarning("[GravityGunEquip] gravityGun field is not assigned!"); return; }
+        if (gravityGun == null)         { Debug.LogWarning("[GravityGunEquip] gravityGun field is not assigned!"); return; }
         if (gravityGunItemData == null) { Debug.LogWarning("[GravityGunEquip] gravityGunItemData field is not assigned!"); return; }
 
-        bool inInventory = InventorySystem.Instance.HasItemWithData(gravityGunItemData);
         var selected = HotbarSystem.Instance.GetSelectedItem();
-        bool equipped = inInventory && selected != null && selected.data == gravityGunItemData;
+        bool equipped = selected != null && selected.data == gravityGunItemData;
 
-        Debug.Log($"[GravityGunEquip] inInventory={inInventory} selectedItem={selected?.data?.itemName ?? "null"} equipped={equipped}");
-        gravityGun.enabled = equipped;
+        gravityGun.SetEquipped(equipped);
     }
 }

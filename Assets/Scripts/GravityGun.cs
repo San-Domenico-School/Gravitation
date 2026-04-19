@@ -52,6 +52,9 @@ public class GravityGun : MonoBehaviour
     public int maxSelectionCount = 20;
 
     [Header("Visuals")]
+    [Tooltip("The gun model shown only when equipped in the hotbar.")]
+    [SerializeField] private GameObject gunVisual;
+
     [Tooltip("Visual indicator shown in selection mode (e.g., a cone).")]
     public GameObject selectionCone;
 
@@ -90,70 +93,42 @@ public class GravityGun : MonoBehaviour
             }
         }
 
+        // Register input actions here so they work even if the component starts disabled.
+        // Awake runs on disabled components; OnEnable does not.
+        if (Shoot != null)     { Shoot.action.performed += OnShoot;          Shoot.action.Enable(); }
+        if (AltShoot != null)  { AltShoot.action.performed += OnAltShoot;    AltShoot.action.Enable(); }
+        if (SwitchMode != null){ SwitchMode.action.performed += OnSwitchMode; SwitchMode.action.Enable(); }
+        if (SelfSelect != null){ SelfSelect.action.performed += OnSelfSelect; SelfSelect.action.Enable(); }
+        Debug.Log("[GravityGun] Awake — actions registered");
+
         // Set initial visuals
         UpdateVisuals();
     }
 
-    private void OnEnable()
+    private bool isEquipped = false;
+
+    public void SetEquipped(bool value)
     {
-        if (Shoot != null)
-        {
-            Shoot.action.performed += OnShoot;
-            Shoot.action.Enable();
-        }
-
-        if (AltShoot != null)
-        {
-            AltShoot.action.performed += OnAltShoot;
-            AltShoot.action.Enable();
-        }
-
-        if (SwitchMode != null)
-        {
-            SwitchMode.action.performed += OnSwitchMode;
-            SwitchMode.action.Enable();
-        }
-
-        if (SelfSelect != null)
-        {
-            SelfSelect.action.performed += OnSelfSelect;
-            SelfSelect.action.Enable();
-        }
-
-        Debug.Log("GravityGun input actions enabled");
+        isEquipped = value;
+        if (gunVisual != null) gunVisual.SetActive(value);
+        UpdateVisuals();
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
-        if (Shoot != null)
-        {
-            Shoot.action.performed -= OnShoot;
-            Shoot.action.Disable();
-        }
-
-        if (AltShoot != null)
-        {
-            AltShoot.action.performed -= OnAltShoot;
-            AltShoot.action.Disable();
-        }
-
-        if (SwitchMode != null)
-        {
-            SwitchMode.action.performed -= OnSwitchMode;
-            SwitchMode.action.Disable();
-        }
-
-        if (SelfSelect != null)
-        {
-            SelfSelect.action.performed -= OnSelfSelect;
-            SelfSelect.action.Disable();
-        }
-
-        Debug.Log("GravityGun input actions disabled");
+        if (Shoot != null)     Shoot.action.performed -= OnShoot;
+        if (AltShoot != null)  AltShoot.action.performed -= OnAltShoot;
+        if (SwitchMode != null) SwitchMode.action.performed -= OnSwitchMode;
+        if (SelfSelect != null) SelfSelect.action.performed -= OnSelfSelect;
+        // NOTE: not calling action.Disable() — shared actions; disabling would break any other listener.
     }
 
     private void OnShoot(InputAction.CallbackContext ctx)
     {
+        bool invOpen = InventoryUI.Instance != null && InventoryUI.Instance.IsOpen;
+        Debug.Log($"[GravityGun] OnShoot — equipped={isEquipped} inventoryOpen={invOpen} hasCharge={batterySystem?.HasCharge}");
+        if (!isEquipped || invOpen) return;
+
         // Check if gun is disabled due to no charge
         if (batterySystem != null && !batterySystem.HasCharge)
         {
@@ -161,7 +136,6 @@ public class GravityGun : MonoBehaviour
             return;
         }
 
-        Debug.Log("OnShoot triggered");
         switch (currentMode)
         {
             case Mode.Selection:
@@ -176,6 +150,8 @@ public class GravityGun : MonoBehaviour
 
     private void OnAltShoot(InputAction.CallbackContext ctx)
     {
+        if (!isEquipped || (InventoryUI.Instance != null && InventoryUI.Instance.IsOpen)) return;
+
         // Check if gun is disabled due to no charge (only blocks removal in placement mode)
         if (batterySystem != null && !batterySystem.HasCharge && currentMode == Mode.GravityPlacement)
         {
@@ -183,8 +159,6 @@ public class GravityGun : MonoBehaviour
             return;
         }
 
-        Debug.Log("OnAltShoot triggered");
-        
         if (currentMode == Mode.Selection)
         {
             TryDeselectBody();
@@ -197,6 +171,8 @@ public class GravityGun : MonoBehaviour
 
     private void OnSwitchMode(InputAction.CallbackContext ctx)
     {
+        if (!isEquipped || (InventoryUI.Instance != null && InventoryUI.Instance.IsOpen)) return;
+
         // Check if gun is disabled due to no charge
         if (batterySystem != null && !batterySystem.HasCharge)
         {
@@ -204,16 +180,13 @@ public class GravityGun : MonoBehaviour
             return;
         }
 
-        Debug.Log("OnSwitchMode triggered");
         currentMode = currentMode == Mode.Selection ? Mode.GravityPlacement : Mode.Selection;
-        Debug.Log($"GravityGun mode switched to: {currentMode}");
         UpdateVisuals();
     }
 
     private void OnSelfSelect(InputAction.CallbackContext ctx)
     {
-        Debug.Log("OnSelfSelect triggered");
-        
+        if (!isEquipped) return;
         if (currentMode == Mode.Selection)
         {
             TryTogglePlayerSelection();
@@ -372,27 +345,11 @@ public class GravityGun : MonoBehaviour
 
     private void UpdateVisuals()
     {
-        Debug.Log($"UpdateVisuals called. Mode: {currentMode}, Cone: {(selectionCone != null ? "assigned" : "NULL")}, Crosshair: {(placementCrosshair != null ? "assigned" : "NULL")}");
-        
         if (selectionCone != null)
-        {
             selectionCone.SetActive(currentMode == Mode.GravityPlacement);
-            Debug.Log($"Selection cone set to: {currentMode == Mode.GravityPlacement}");
-        }
-        else
-        {
-            Debug.LogWarning("Selection cone is not assigned!");
-        }
 
         if (placementCrosshair != null)
-        {
             placementCrosshair.enabled = (currentMode == Mode.GravityPlacement);
-            Debug.Log($"Placement crosshair set to: {currentMode == Mode.GravityPlacement}");
-        }
-        else
-        {
-            Debug.LogWarning("Placement crosshair is not assigned!");
-        }
     }
 
     private void PlayOutOfChargeAudio()

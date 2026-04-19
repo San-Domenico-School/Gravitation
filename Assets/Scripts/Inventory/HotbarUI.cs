@@ -23,11 +23,9 @@ public class HotbarUI : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log($"[HotbarUI] Start — slotUIs count: {slotUIs?.Length ?? -1}, HotbarSystem: {HotbarSystem.Instance != null}");
-
         for (int i = 0; i < slotUIs.Length; i++)
         {
-            if (slotUIs[i] == null) { Debug.LogError($"[HotbarUI] slotUIs[{i}] is NULL — assign all 5 slots in the Inspector"); continue; }
+            if (slotUIs[i] == null) { Debug.LogError($"[HotbarUI] slotUIs[{i}] is NULL"); continue; }
             int captured = i;
             slotUIs[i].Init(captured, OnSlotLeftClicked, OnSlotRightClicked);
         }
@@ -39,10 +37,9 @@ public class HotbarUI : MonoBehaviour
 
     private void OnSlotLeftClicked(int index)
     {
-        // If the inventory has an active drag, drop the dragged item into this hotbar slot
+        Debug.Log($"[HotbarUI] OnSlotLeftClicked index={index}");
         if (InventoryUI.Instance != null && InventoryUI.Instance.TryAssignDraggedToHotbar(index))
             return;
-        // Otherwise, just select this slot
         HotbarSystem.Instance.SelectSlot(index);
     }
 
@@ -65,11 +62,21 @@ public class HotbarUI : MonoBehaviour
         hotbar5Action.action.performed -= OnHotbar5;
     }
 
-    private void OnHotbar1(InputAction.CallbackContext ctx) { Debug.Log("[HotbarUI] Key 1 fired"); HotbarSystem.Instance.SelectSlot(0); }
-    private void OnHotbar2(InputAction.CallbackContext ctx) => HotbarSystem.Instance.SelectSlot(1);
-    private void OnHotbar3(InputAction.CallbackContext ctx) => HotbarSystem.Instance.SelectSlot(2);
-    private void OnHotbar4(InputAction.CallbackContext ctx) => HotbarSystem.Instance.SelectSlot(3);
-    private void OnHotbar5(InputAction.CallbackContext ctx) => HotbarSystem.Instance.SelectSlot(4);
+    private void OnHotbar1(InputAction.CallbackContext ctx) => HandleHotbarKey(0);
+    private void OnHotbar2(InputAction.CallbackContext ctx) => HandleHotbarKey(1);
+    private void OnHotbar3(InputAction.CallbackContext ctx) => HandleHotbarKey(2);
+    private void OnHotbar4(InputAction.CallbackContext ctx) => HandleHotbarKey(3);
+    private void OnHotbar5(InputAction.CallbackContext ctx) => HandleHotbarKey(4);
+
+    private void HandleHotbarKey(int index)
+    {
+        bool invOpen = InventoryUI.Instance != null && InventoryUI.Instance.IsOpen;
+        Debug.Log($"[HotbarUI] HandleHotbarKey index={index} inventoryOpen={invOpen}");
+        if (invOpen)
+            InventoryUI.Instance.TryAssignHovered(index);
+        else
+            HotbarSystem.Instance.SelectSlot(index);
+    }
 
     private void Refresh()
     {

@@ -407,7 +407,7 @@ Transform:
   m_GameObject: {fileID: 45209293}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.91197, y: -5.05, z: 3.5}
+  m_LocalPosition: {x: -2.91197, y: -9.06, z: 3.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -595,7 +595,7 @@ Transform:
   m_GameObject: {fileID: 202900358}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.25, y: -5.41916, z: 0.71}
+  m_LocalPosition: {x: 3.25, y: -9.22, z: 0.71}
   m_LocalScale: {x: 1.13695, y: 0.4, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1079,7 +1079,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0.5}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.6364, y: 1.6364, z: 1.6364}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1028310856}
@@ -2008,7 +2008,7 @@ Transform:
   m_GameObject: {fileID: 820813413}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.91197, y: -4.754, z: 0.62}
+  m_LocalPosition: {x: -2.91197, y: -8.93, z: 0.62}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2614,7 +2614,7 @@ Transform:
   m_GameObject: {fileID: 1061048747}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.91197, y: -5.05, z: -2.1771}
+  m_LocalPosition: {x: -2.91197, y: -8.91, z: -2.1771}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3581,6 +3581,7 @@ GameObject:
   - component: {fileID: 1647194950}
   - component: {fileID: 1647194951}
   - component: {fileID: 1647194952}
+  - component: {fileID: 1647194953}
   m_Layer: 0
   m_Name: Inventory/Hotbar Manager
   m_TagString: Untagged
@@ -3627,6 +3628,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b342bc744365e4a5fa1cb075a07e7410, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HotbarSystem
+--- !u!114 &1647194953
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1647194949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66ec89f9ef7274e91b1e40a1439a53a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CraftingSystem
+  craftingDatabase: {fileID: 11400000, guid: f6c98f423af0c4ebc978b500f64ef627, type: 2}
 --- !u!43 &1770440787
 Mesh:
   m_ObjectHideFlags: 0
@@ -6170,7 +6184,7 @@ Transform:
   m_GameObject: {fileID: 2000506920}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.34, y: -5.05, z: -2.1771}
+  m_LocalPosition: {x: -0.34, y: -8.67, z: -2.1771}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

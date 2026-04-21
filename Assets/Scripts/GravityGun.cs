@@ -55,6 +55,9 @@ public class GravityGun : MonoBehaviour
     [Tooltip("The gun model shown only when equipped in the hotbar.")]
     [SerializeField] private GameObject gunVisual;
 
+    [Tooltip("Battery HUD shown only when the gun is equipped.")]
+    [SerializeField] private GameObject batteryUI;
+
     [Tooltip("Visual indicator shown in selection mode (e.g., a cone).")]
     public GameObject selectionCone;
 
@@ -110,7 +113,10 @@ public class GravityGun : MonoBehaviour
     public void SetEquipped(bool value)
     {
         isEquipped = value;
-        if (gunVisual != null) gunVisual.SetActive(value);
+        if (gunVisual != null)
+            foreach (var r in gunVisual.GetComponentsInChildren<Renderer>(true))
+                r.enabled = value;
+        if (batteryUI != null) batteryUI.SetActive(value);
         UpdateVisuals();
     }
 

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemName: 'Silver Deposit  '
   itemType: 0
-  icon: {fileID: 0}
+  icon: {fileID: 744049322, guid: 1d49461c572f94f258ad30cb01e65cb7, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

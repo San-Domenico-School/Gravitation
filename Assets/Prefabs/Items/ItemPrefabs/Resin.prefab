@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8202965111400189500}
   - component: {fileID: 3023694591540851557}
   m_Layer: 0
-  m_Name: Silver Deposit
+  m_Name: Resin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33,7 +33,7 @@ Transform:
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 1
   m_Children:
-  - {fileID: 6791464304818360200}
+  - {fileID: 2975890797070605755}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5061200747216128329
@@ -125,9 +125,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c827266e6360d4a1f958f40a93711c30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldItem
-  itemData: {fileID: 11400000, guid: 978971a27a1a941009a4754130e4c7be, type: 2}
+  itemData: {fileID: 11400000, guid: b836b8afe4ee9422a8d79455ed9b6235, type: 2}
   pickupRange: 2.5
---- !u!1001 &6470152796129519715
+--- !u!1001 &3370598613918038608
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -135,57 +135,57 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3974787384520076723}
     m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: d9ec8c96fcba642ba8dce15cbbe80e87, type: 3}
+    - target: {fileID: -8679921383154817045, guid: f23e4d582a8bc4799bbd50fa441568d3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.69386715
+      value: 1.0438337
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: d9ec8c96fcba642ba8dce15cbbe80e87, type: 3}
+    - target: {fileID: -8679921383154817045, guid: f23e4d582a8bc4799bbd50fa441568d3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.0110658
+      value: 1.230831
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: d9ec8c96fcba642ba8dce15cbbe80e87, type: 3}
+    - target: {fileID: -8679921383154817045, guid: f23e4d582a8bc4799bbd50fa441568d3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.0000006
+      value: 1.5043988
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: d9ec8c96fcba642ba8dce15cbbe80e87, type: 3}
+    - target: {fileID: -8679921383154817045, guid: f23e4d582a8bc4799bbd50fa441568d3, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: d9ec8c96fcba642ba8dce15cbbe80e87, type: 3}
+    - target: {fileID: -8679921383154817045, guid: f23e4d582a8bc4799bbd50fa441568d3, type: 3}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: d9ec8c96fcba642ba8dce15cbbe80e87, type: 3}
+    - target: {fileID: -8679921383154817045, guid: f23e4d582a8bc4799bbd50fa441568d3, type: 3}
       propertyPath: m_LocalRotation.y
       value: -0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: d9ec8c96fcba642ba8dce15cbbe80e87, type: 3}
+    - target: {fileID: -8679921383154817045, guid: f23e4d582a8bc4799bbd50fa441568d3, type: 3}
       propertyPath: m_LocalRotation.z
       value: -0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: d9ec8c96fcba642ba8dce15cbbe80e87, type: 3}
+    - target: {fileID: -8679921383154817045, guid: f23e4d582a8bc4799bbd50fa441568d3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: d9ec8c96fcba642ba8dce15cbbe80e87, type: 3}
+    - target: {fileID: -8679921383154817045, guid: f23e4d582a8bc4799bbd50fa441568d3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: d9ec8c96fcba642ba8dce15cbbe80e87, type: 3}
+    - target: {fileID: -8679921383154817045, guid: f23e4d582a8bc4799bbd50fa441568d3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: d9ec8c96fcba642ba8dce15cbbe80e87, type: 3}
+    - target: {fileID: 919132149155446097, guid: f23e4d582a8bc4799bbd50fa441568d3, type: 3}
       propertyPath: m_Name
-      value: silver_deposit
+      value: resin
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: d9ec8c96fcba642ba8dce15cbbe80e87, type: 3}
---- !u!4 &6791464304818360200 stripped
+  m_SourcePrefab: {fileID: 100100000, guid: f23e4d582a8bc4799bbd50fa441568d3, type: 3}
+--- !u!4 &2975890797070605755 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d9ec8c96fcba642ba8dce15cbbe80e87, type: 3}
-  m_PrefabInstance: {fileID: 6470152796129519715}
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f23e4d582a8bc4799bbd50fa441568d3, type: 3}
+  m_PrefabInstance: {fileID: 3370598613918038608}
   m_PrefabAsset: {fileID: 0}

@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 34b61a0247d3c4f8ebb99d0ef93be75a, type: 3}
-  m_Name: Copper deposit
+  m_Name: Wood
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemName: Copper Deposit
+  itemName: Wood
   itemType: 0
-  icon: {fileID: -679936365, guid: 3dc13ae864f8042a09e0be2f2e3879cb, type: 3}
+  icon: {fileID: 716927757, guid: 3bafb040777304558bbefade30710f2c, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

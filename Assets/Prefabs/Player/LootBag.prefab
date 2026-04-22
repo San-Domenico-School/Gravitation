@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5519663259750604483}
   - component: {fileID: 8309878833817039953}
   - component: {fileID: 358748021319496758}
+  - component: {fileID: 9211112775045351574}
   m_Layer: 0
   m_Name: LootBag
   m_TagString: Untagged
@@ -154,3 +155,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &9211112775045351574
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2918369031820470555}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c90cb3b45f2274efda27ae2c6592014c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GravityBody
+  gravityDirection: {x: 0, y: -1, z: 0}
+  gravityStrength: 9.81
+  isSelected: 0
+  rotationSpeed: 6

@@ -137,6 +137,8 @@ public class CraftingUI : MonoBehaviour
             var go = Instantiate(recipeRowPrefab, recipeContainer);
             var row = go.GetComponent<RecipeRowUI>();
             if (row == null) { Debug.LogError($"[CraftingUI] recipeRowPrefab '{recipeRowPrefab.name}' has no RecipeRowUI component on its root!"); continue; }
+            var rt = go.GetComponent<RectTransform>();
+            Debug.Log($"[CraftingUI] Spawned row '{item.itemName}' — active={go.activeSelf}, pos={rt?.anchoredPosition}, size={rt?.sizeDelta}, containerChildCount={recipeContainer.childCount}");
             row.Setup(item, OnCraftClicked);
             spawnedRows.Add(row);
         }

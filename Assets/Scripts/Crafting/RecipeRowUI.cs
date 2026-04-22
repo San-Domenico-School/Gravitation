@@ -21,6 +21,8 @@ public class RecipeRowUI : MonoBehaviour
         ItemData = data;
         onCraftClicked = craftCallback;
 
+        Debug.Log($"[RecipeRowUI] Setup '{data.itemName}' — icon={iconImage != null}, nameText={nameText != null}, ingredientsText={ingredientsText != null}, craftButton={craftButton != null}, canvasGroup={canvasGroup != null}");
+
         if (iconImage != null) iconImage.sprite = data.icon;
         if (nameText != null) nameText.text = data.itemName;
 

@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7069588ed042e493882bf8e703e59e28, type: 3}
   m_Name: CraftingDatabase
   m_EditorClassIdentifier: Assembly-CSharp::CraftingDatabase
-  allCraftableItems: []
+  allCraftableItems:
+  - {fileID: 11400000, guid: 6902c7b6988ea4578bc9e4361261a0cf, type: 2}

@@ -10,7 +10,6 @@ public class GravityGunEquipSystem : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log($"[GravityGunEquip] Start — gun={gravityGun != null}, itemData={gravityGunItemData != null}, gun.go.active={gravityGun?.gameObject.activeInHierarchy}, gun.enabled={gravityGun?.enabled}");
         HotbarSystem.Instance.OnHotbarChanged += UpdateEquipState;
         HotbarSystem.Instance.OnSelectionChanged += UpdateEquipState;
         InventorySystem.Instance.OnInventoryChanged += UpdateEquipState;

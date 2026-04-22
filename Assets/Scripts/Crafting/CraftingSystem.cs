@@ -16,6 +16,10 @@ public class CraftingSystem : MonoBehaviour
     {
         if (Instance != null && Instance != this) { Destroy(this); return; }
         Instance = this;
+        if (craftingDatabase == null)
+            Debug.LogError("[CraftingSystem] craftingDatabase is not assigned in the inspector!");
+        else
+            Debug.Log($"[CraftingSystem] Awake OK — database has {craftingDatabase.allCraftableItems.Count} items");
     }
 
     public bool CanCraft(ItemData item)
@@ -69,15 +73,19 @@ public class CraftingSystem : MonoBehaviour
     public List<ItemData> GetCraftableItemsForTier(CraftingTier maxTier)
     {
         var result = new List<ItemData>();
-        if (craftingDatabase == null) return result;
+        if (craftingDatabase == null) { Debug.LogError("[CraftingSystem] GetCraftableItemsForTier: craftingDatabase is null!"); return result; }
 
+        Debug.Log($"[CraftingSystem] GetCraftableItemsForTier({maxTier}) — scanning {craftingDatabase.allCraftableItems.Count} database entries");
         foreach (var item in craftingDatabase.allCraftableItems)
         {
-            if (item == null) continue;
-            if (item.tier == CraftingTier.None) continue;
-            if (item.recipe == null || item.recipe.Count == 0) continue;
-            if ((int)item.tier <= (int)maxTier) result.Add(item);
+            if (item == null) { Debug.LogWarning("[CraftingSystem] Null entry in CraftingDatabase — remove it from the list"); continue; }
+            if (item.tier == CraftingTier.None) { Debug.Log($"[CraftingSystem]   SKIP {item.itemName} — tier=None"); continue; }
+            if (item.recipe == null || item.recipe.Count == 0) { Debug.Log($"[CraftingSystem]   SKIP {item.itemName} — recipe empty"); continue; }
+            if ((int)item.tier > (int)maxTier) { Debug.Log($"[CraftingSystem]   SKIP {item.itemName} — tier {item.tier} > crafter tier {maxTier}"); continue; }
+            Debug.Log($"[CraftingSystem]   ADD  {item.itemName} (tier={item.tier}, ingredients={item.recipe.Count})");
+            result.Add(item);
         }
+        Debug.Log($"[CraftingSystem] GetCraftableItemsForTier result: {result.Count} items");
         return result;
     }
 

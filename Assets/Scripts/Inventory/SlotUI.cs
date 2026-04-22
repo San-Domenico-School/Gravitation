@@ -49,7 +49,6 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log($"[SlotUI] Click slot={slotIndex} button={eventData.button}");
         if (eventData.button == PointerEventData.InputButton.Left)
             onClick?.Invoke(slotIndex);
         else if (eventData.button == PointerEventData.InputButton.Right)
@@ -58,14 +57,12 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Debug.Log($"[SlotUI] Hover ENTER slot={slotIndex}");
         IsHovered = true;
         onHoverEnter?.Invoke(slotIndex);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        Debug.Log($"[SlotUI] Hover EXIT slot={slotIndex}");
         IsHovered = false;
         onHoverExit?.Invoke(slotIndex);
     }

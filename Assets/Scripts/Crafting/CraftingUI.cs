@@ -47,14 +47,23 @@ public class CraftingUI : MonoBehaviour
         if (Instance != null && Instance != this) { Destroy(this); return; }
         Instance = this;
 
-        closeAction.action.performed += OnCloseInput;
-        closeAction.action.Enable();
+        Debug.Log($"[CraftingUI] Awake — craftingPanel={craftingPanel != null}, recipeContainer={recipeContainer != null}, recipeRowPrefab={recipeRowPrefab != null}, closeButton={closeButton != null}, closeAction={closeAction != null}");
+
+        if (closeAction == null) { Debug.LogError("[CraftingUI] closeAction is not assigned! Close button and Escape will not work."); }
+        else { closeAction.action.performed += OnCloseInput; closeAction.action.Enable(); }
 
         if (craftingPanel != null) craftingPanel.SetActive(false);
+        else Debug.LogError("[CraftingUI] craftingPanel is not assigned!");
+
+        if (recipeContainer == null) Debug.LogError("[CraftingUI] recipeContainer is not assigned!");
+        if (recipeRowPrefab == null) Debug.LogError("[CraftingUI] recipeRowPrefab is not assigned!");
+
         if (tooltip != null) tooltip.SetActive(false);
         if (progressBarRoot != null) progressBarRoot.SetActive(false);
         if (craftingLabel != null) craftingLabel.gameObject.SetActive(false);
+
         if (closeButton != null) closeButton.onClick.AddListener(Close);
+        else Debug.LogWarning("[CraftingUI] closeButton is not assigned — close button will not work.");
     }
 
     private void Start()
@@ -72,9 +81,9 @@ public class CraftingUI : MonoBehaviour
     // Called by Crafter when the player interacts with a crafting station.
     public void Open(CraftingTier tier)
     {
+        Debug.Log($"[CraftingUI] Open called — tier={tier}, alreadyOpen={isOpen}, craftingPanel={craftingPanel != null}");
         if (isOpen)
         {
-            // Already open — just switch to the new tier's recipe list.
             PopulateRecipes(tier);
             return;
         }
@@ -84,8 +93,6 @@ public class CraftingUI : MonoBehaviour
         Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-
-        // Same pattern as InventoryUI: do NOT disable action maps.
 
         PopulateRecipes(tier);
     }
@@ -119,11 +126,17 @@ public class CraftingUI : MonoBehaviour
             if (row != null) Destroy(row.gameObject);
         spawnedRows.Clear();
 
+        if (CraftingSystem.Instance == null) { Debug.LogError("[CraftingUI] CraftingSystem.Instance is null! Make sure CraftingSystem is in the scene."); return; }
+        if (recipeRowPrefab == null) { Debug.LogError("[CraftingUI] recipeRowPrefab is null — cannot spawn rows."); return; }
+        if (recipeContainer == null) { Debug.LogError("[CraftingUI] recipeContainer is null — cannot parent rows."); return; }
+
         var items = CraftingSystem.Instance.GetCraftableItemsForTier(tier);
+        Debug.Log($"[CraftingUI] PopulateRecipes({tier}) — spawning {items.Count} rows");
         foreach (var item in items)
         {
             var go = Instantiate(recipeRowPrefab, recipeContainer);
             var row = go.GetComponent<RecipeRowUI>();
+            if (row == null) { Debug.LogError($"[CraftingUI] recipeRowPrefab '{recipeRowPrefab.name}' has no RecipeRowUI component on its root!"); continue; }
             row.Setup(item, OnCraftClicked);
             spawnedRows.Add(row);
         }

@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemName: Wiring Kit
   itemType: 1
-  icon: {fileID: 0}
+  icon: {fileID: -1261731848, guid: 925ba58ca3e164075b29c47f8e09da7d, type: 3}
   description: wiring kit
   isUnique: 0
   cellData: {fileID: 0}
-  worldPrefab: {fileID: 0}
+  worldPrefab: {fileID: 2517626900717576720, guid: ec87a700adba54f26a124427f1c558c8, type: 3}
   tier: 1
   recipe:
   - itemData: {fileID: 11400000, guid: 978971a27a1a941009a4754130e4c7be, type: 2}

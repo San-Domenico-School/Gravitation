@@ -673,6 +673,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3974787384520076723, guid: 1eaf6b41c37df48e9aaed39bd2c52fa1, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6257190078942936313, guid: 1eaf6b41c37df48e9aaed39bd2c52fa1, type: 3}
       propertyPath: m_Name
       value: Gravity Crystal
@@ -933,6 +937,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3974787384520076723, guid: adcb635dfec754a32bfc3832325d31f1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3974787384520076723, guid: adcb635dfec754a32bfc3832325d31f1, type: 3}
+      propertyPath: m_ConstrainProportionsScale
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6257190078942936313, guid: adcb635dfec754a32bfc3832325d31f1, type: 3}
@@ -2291,6 +2299,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3974787384520076723, guid: 385972fcf4ae64c69bff5258f030678d, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6257190078942936313, guid: 385972fcf4ae64c69bff5258f030678d, type: 3}
       propertyPath: m_Name
       value: Metal Scrap
@@ -3094,6 +3106,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3974787384520076723, guid: 6c6d2f7df1b6948d4a45814ff747095f, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6257190078942936313, guid: 6c6d2f7df1b6948d4a45814ff747095f, type: 3}
       propertyPath: m_Name
       value: Wood
@@ -3409,6 +3425,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3974787384520076723, guid: 9f356386efa9c43b68a5fe34e54ce5d1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3974787384520076723, guid: 9f356386efa9c43b68a5fe34e54ce5d1, type: 3}
+      propertyPath: m_ConstrainProportionsScale
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6257190078942936313, guid: 9f356386efa9c43b68a5fe34e54ce5d1, type: 3}
@@ -4822,6 +4842,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3974787384520076723, guid: b3518aa76c2c04df6a0af71646434169, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6257190078942936313, guid: b3518aa76c2c04df6a0af71646434169, type: 3}
       propertyPath: m_Name
       value: Resin
@@ -5638,6 +5662,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3974787384520076723, guid: 89cc1d9a3810746f69100f0d9d3e665b, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6257190078942936313, guid: 89cc1d9a3810746f69100f0d9d3e665b, type: 3}
       propertyPath: m_Name
       value: Rubber Juice
@@ -5809,6 +5837,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3974787384520076723, guid: c7b309582658441908793a6cf4f0f776, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3974787384520076723, guid: c7b309582658441908793a6cf4f0f776, type: 3}
+      propertyPath: m_ConstrainProportionsScale
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6257190078942936313, guid: c7b309582658441908793a6cf4f0f776, type: 3}
@@ -6134,6 +6166,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3974787384520076723, guid: 8c82b0a22a08045aeaf8b45d2a56d974, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3974787384520076723, guid: 8c82b0a22a08045aeaf8b45d2a56d974, type: 3}
+      propertyPath: m_ConstrainProportionsScale
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6257190078942936313, guid: 8c82b0a22a08045aeaf8b45d2a56d974, type: 3}
@@ -7718,6 +7754,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6855006485396339252, guid: f251edc0d950b4019836598b81e4f1c0, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7142388402120677143, guid: f251edc0d950b4019836598b81e4f1c0, type: 3}
       propertyPath: m_Name
       value: Crafter (T1)
@@ -7865,6 +7905,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3974787384520076723, guid: 03f1d4fbbed08420688d7cad45024cac, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3974787384520076723, guid: 03f1d4fbbed08420688d7cad45024cac, type: 3}
+      propertyPath: m_ConstrainProportionsScale
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6257190078942936313, guid: 03f1d4fbbed08420688d7cad45024cac, type: 3}

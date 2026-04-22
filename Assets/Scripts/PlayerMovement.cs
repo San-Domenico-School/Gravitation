@@ -96,10 +96,7 @@ public class PlayerMovement : MonoBehaviour
     {
         // Capture jump input (do this in Update for consistent frame detection)
         if (Jump != null && Jump.action.triggered)
-        {
             jumpRequested = true;
-            Debug.Log("Jump input captured");
-        }
 
         // All camera look input (pitch and yaw) is now handled by CameraController script
     }

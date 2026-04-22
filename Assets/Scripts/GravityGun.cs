@@ -102,7 +102,6 @@ public class GravityGun : MonoBehaviour
         if (AltShoot != null)  { AltShoot.action.performed += OnAltShoot;    AltShoot.action.Enable(); }
         if (SwitchMode != null){ SwitchMode.action.performed += OnSwitchMode; SwitchMode.action.Enable(); }
         if (SelfSelect != null){ SelfSelect.action.performed += OnSelfSelect; SelfSelect.action.Enable(); }
-        Debug.Log("[GravityGun] Awake — actions registered");
 
         // Set initial visuals
         UpdateVisuals();
@@ -132,7 +131,6 @@ public class GravityGun : MonoBehaviour
     private void OnShoot(InputAction.CallbackContext ctx)
     {
         bool invOpen = InventoryUI.Instance != null && InventoryUI.Instance.IsOpen;
-        Debug.Log($"[GravityGun] OnShoot — equipped={isEquipped} inventoryOpen={invOpen} hasCharge={batterySystem?.HasCharge}");
         if (!isEquipped || invOpen) return;
 
         // Check if gun is disabled due to no charge
@@ -216,19 +214,9 @@ public class GravityGun : MonoBehaviour
         }
 
         if (selectedBodies.Contains(playerBody))
-        {
             selectedBodies.Remove(playerBody);
-            Debug.Log("Player deselected");
-        }
         else if (selectedBodies.Count < maxSelectionCount)
-        {
             selectedBodies.Add(playerBody);
-            Debug.Log("Player selected");
-        }
-        else
-        {
-            Debug.Log("Cannot select player: max selection count reached");
-        }
     }
 
     private void TrySelectBody()
@@ -243,14 +231,7 @@ public class GravityGun : MonoBehaviour
                 return;
 
             if (!selectedBodies.Contains(body))
-            {
                 selectedBodies.Add(body);
-                Debug.Log($"Selected body: {body.name}");
-            }
-        }
-        else
-        {
-            Debug.Log("Raycast missed in selection mode");
         }
     }
 

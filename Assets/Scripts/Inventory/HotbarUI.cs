@@ -37,7 +37,6 @@ public class HotbarUI : MonoBehaviour
 
     private void OnSlotLeftClicked(int index)
     {
-        Debug.Log($"[HotbarUI] OnSlotLeftClicked index={index}");
         if (InventoryUI.Instance != null && InventoryUI.Instance.TryAssignDraggedToHotbar(index))
             return;
         HotbarSystem.Instance.SelectSlot(index);
@@ -71,7 +70,6 @@ public class HotbarUI : MonoBehaviour
     private void HandleHotbarKey(int index)
     {
         bool invOpen = InventoryUI.Instance != null && InventoryUI.Instance.IsOpen;
-        Debug.Log($"[HotbarUI] HandleHotbarKey index={index} inventoryOpen={invOpen}");
         if (invOpen)
             InventoryUI.Instance.TryAssignHovered(index);
         else

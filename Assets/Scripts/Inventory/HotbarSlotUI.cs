@@ -30,7 +30,6 @@ public class HotbarSlotUI : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log($"[HotbarSlotUI] Click slot={slotIndex} button={eventData.button}");
         if (eventData.button == PointerEventData.InputButton.Left)
             onLeftClick?.Invoke(slotIndex);
         else if (eventData.button == PointerEventData.InputButton.Right)

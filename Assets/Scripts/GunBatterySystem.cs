@@ -98,10 +98,8 @@ public class GunBatterySystem : MonoBehaviour
         }
 
         currentCell = newCell;
-        // Clamp charge to new cell's max
         currentCharge = Mathf.Clamp(currentCharge, 0f, currentCell.MaxCharge);
         OnChargeChanged?.Invoke(currentCharge, currentCell.MaxCharge);
-        Debug.Log($"Swapped to cell: {currentCell.CellName}");
     }
 
     /// <summary>

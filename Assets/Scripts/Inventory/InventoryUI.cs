@@ -82,10 +82,8 @@ public class InventoryUI : MonoBehaviour
 
     public void TryAssignHovered(int hotbarIndex)
     {
-        Debug.Log($"[InventoryUI] TryAssignHovered hotbarIndex={hotbarIndex} hoveredSlot={hoveredSlotIndex}");
         if (hoveredSlotIndex < 0) return;
         var item = InventorySystem.Instance.GetItemInSlot(hoveredSlotIndex);
-        Debug.Log($"[InventoryUI] TryAssignHovered item={item?.data?.itemName ?? "null"}");
         if (item != null)
             HotbarSystem.Instance.AssignToHotbar(hotbarIndex, item);
     }
@@ -157,7 +155,6 @@ public class InventoryUI : MonoBehaviour
         if (newHovered != hoveredSlotIndex)
         {
             hoveredSlotIndex = newHovered;
-            Debug.Log($"[InventoryUI] Hovered slot={hoveredSlotIndex}");
             if (hoveredSlotIndex < 0 || tooltip == null) return;
             var item = InventorySystem.Instance.GetItemInSlot(hoveredSlotIndex);
             StopAllCoroutines();
@@ -178,7 +175,6 @@ public class InventoryUI : MonoBehaviour
 
     private void OnSlotClicked(int slotIndex)
     {
-        Debug.Log($"[InventoryUI] OnSlotClicked slot={slotIndex} dragActive={dragSourceSlot >= 0}");
         if (dragSourceSlot < 0)
         {
             var item = InventorySystem.Instance.GetItemInSlot(slotIndex);

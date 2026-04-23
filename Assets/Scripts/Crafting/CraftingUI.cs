@@ -130,6 +130,7 @@ public class CraftingUI : MonoBehaviour
         if (recipeRowPrefab == null) { Debug.LogError("[CraftingUI] recipeRowPrefab is null — cannot spawn rows."); return; }
         if (recipeContainer == null) { Debug.LogError("[CraftingUI] recipeContainer is null — cannot parent rows."); return; }
 
+        Debug.Log($"[CraftingUI] recipeContainer is '{recipeContainer.name}' (path: {GetPath(recipeContainer)})");
         var items = CraftingSystem.Instance.GetCraftableItemsForTier(tier);
         Debug.Log($"[CraftingUI] PopulateRecipes({tier}) — spawning {items.Count} rows");
         foreach (var item in items)
@@ -137,11 +138,10 @@ public class CraftingUI : MonoBehaviour
             var go = Instantiate(recipeRowPrefab, recipeContainer);
             var row = go.GetComponent<RecipeRowUI>();
             if (row == null) { Debug.LogError($"[CraftingUI] recipeRowPrefab '{recipeRowPrefab.name}' has no RecipeRowUI component on its root!"); continue; }
-            var rt = go.GetComponent<RectTransform>();
-            Debug.Log($"[CraftingUI] Spawned row '{item.itemName}' — active={go.activeSelf}, pos={rt?.anchoredPosition}, size={rt?.sizeDelta}, containerChildCount={recipeContainer.childCount}");
             row.Setup(item, OnCraftClicked);
             spawnedRows.Add(row);
         }
+        StartCoroutine(DebugPostLayout());
     }
 
     private void OnInventoryChanged()
@@ -239,6 +239,34 @@ public class CraftingUI : MonoBehaviour
             tooltipCoroutine = StartCoroutine(ShowTooltipDelayed(hoveredRow.ItemData, Mouse.current.position.ReadValue()));
         else if (tooltip != null)
             tooltip.SetActive(false);
+    }
+
+    private IEnumerator DebugPostLayout()
+    {
+        yield return null; // wait one frame for layout to run
+        Debug.Log($"[CraftingUI] Post-layout — {spawnedRows.Count} rows, craftingPanel active={craftingPanel.activeSelf}");
+        foreach (var row in spawnedRows)
+        {
+            if (row == null) continue;
+            var rt = row.GetComponent<RectTransform>();
+            var corners = new Vector3[4];
+            rt.GetWorldCorners(corners);
+            var cg = row.GetComponent<CanvasGroup>();
+            Debug.Log($"[CraftingUI]   Row '{row.ItemData?.itemName}' worldBL={corners[0]:F1} worldTR={corners[2]:F1} alpha={cg?.alpha} active={row.gameObject.activeSelf}");
+        }
+        if (recipeContainer is RectTransform crt)
+        {
+            var corners = new Vector3[4];
+            crt.GetWorldCorners(corners);
+            Debug.Log($"[CraftingUI]   recipeContainer worldBL={corners[0]:F1} worldTR={corners[2]:F1} size={crt.rect.size}");
+        }
+    }
+
+    private static string GetPath(Transform t)
+    {
+        string path = t.name;
+        while (t.parent != null) { t = t.parent; path = t.name + "/" + path; }
+        return path;
     }
 
     // Mirrors InventoryUI's WaitForSecondsRealtime pattern so timeScale = 0 doesn't break delay.

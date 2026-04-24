@@ -13,6 +13,7 @@ public class CraftingSystem : MonoBehaviour
     {
         if (Instance != null && Instance != this) { Destroy(this); return; }
         Instance = this;
+        Debug.Log("awake on crafting system");
     }
 
     public List<CraftingRecipe> GetRecipesForTier(int tier)

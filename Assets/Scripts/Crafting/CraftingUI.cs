@@ -102,8 +102,8 @@ public class CraftingUI : MonoBehaviour
 
         root.style.display = DisplayStyle.Flex;
         Time.timeScale = 0f;
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        UnityEngine.Cursor.lockState = CursorLockMode.None;
+        UnityEngine.Cursor.visible = true;
 
         InventorySystem.Instance.OnInventoryChanged += OnInventoryChanged;
     }
@@ -119,8 +119,8 @@ public class CraftingUI : MonoBehaviour
         activeCrafter = null;
 
         Time.timeScale = 1f;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        UnityEngine.Cursor.visible = false;
 
         InventorySystem.Instance.OnInventoryChanged -= OnInventoryChanged;
     }
@@ -206,12 +206,13 @@ public class CraftingUI : MonoBehaviour
 
     private void RefreshRecipeListSelection()
     {
+        int idx = 0;
+        var filtered = GetFilteredRecipes();
         foreach (var child in recipeList.Children())
         {
-            int idx = recipeList.IndexOf(child);
-            var filtered = GetFilteredRecipes();
             bool isSelected = idx < filtered.Count && filtered[idx] == selectedRecipe;
             child.EnableInClassList("recipe-entry--selected", isSelected);
+            idx++;
         }
     }
 

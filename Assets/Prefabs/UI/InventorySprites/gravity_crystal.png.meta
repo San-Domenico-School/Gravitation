@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: e7900b796d2f2433eb48a8cf1209dea1
+guid: aacab5df3433e4159a43362df50e39fb
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,13 +110,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: iron_deposit2_0
+      name: gravity_crystal_0
       rect:
         serializedVersion: 2
-        x: 29
-        y: 63
-        width: 198
-        height: 131
+        x: 35
+        y: 51
+        width: 186
+        height: 154
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -125,8 +125,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d11ee54f50b8544cdb2f38d61072353e
-      internalID: 1648291388
+      spriteID: 0dc7d36a07ac1403884489055b999239
+      internalID: -388206723
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5b2b5f1ebf8af43da86514586b32b317
+    spriteID: 7d4412e1185644177a0820ed0ff9b3bb
     internalID: 0
     vertices: []
     indices: 
@@ -147,7 +147,7 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      iron_deposit2_0: 1648291388
+      gravity_crystal_0: -388206723
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

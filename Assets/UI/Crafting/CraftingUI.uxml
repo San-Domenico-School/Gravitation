@@ -1,0 +1,50 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <ui:VisualElement name="crafting-root" class="crafting-root">
+        <ui:VisualElement name="crafter-window" class="crafter-window">
+
+            <!-- Header -->
+            <ui:VisualElement name="header" class="header">
+                <ui:Label name="crafter-title" class="crafter-title" text="TIER 1 FABRICATOR" />
+                <ui:Button name="close-btn" class="close-btn" text="✕" />
+            </ui:VisualElement>
+
+            <!-- Three-column content area -->
+            <ui:VisualElement name="content-area" class="content-area">
+
+                <!-- Left: Category list -->
+                <ui:VisualElement name="category-panel" class="category-panel">
+                    <ui:Label class="panel-label" text="CATEGORIES" />
+                    <ui:VisualElement name="category-list" class="category-list" />
+                </ui:VisualElement>
+
+                <!-- Center: Recipe scroll list -->
+                <ui:VisualElement name="recipe-panel" class="recipe-panel">
+                    <ui:Label class="panel-label" text="ITEMS" />
+                    <ui:ScrollView name="recipe-scroll" class="recipe-scroll" mode="Vertical">
+                        <ui:VisualElement name="recipe-list" class="recipe-list" />
+                    </ui:ScrollView>
+                </ui:VisualElement>
+
+                <!-- Right: Detail panel -->
+                <ui:VisualElement name="detail-panel" class="detail-panel">
+                    <ui:VisualElement name="detail-icon-container" class="detail-icon-container">
+                        <ui:VisualElement name="detail-icon" class="detail-icon" />
+                    </ui:VisualElement>
+                    <ui:Label name="detail-name" class="detail-name" text="" />
+                    <ui:Label name="detail-desc" class="detail-desc" text="" />
+                    <ui:Label class="ingredients-label" text="INGREDIENTS" />
+                    <ui:ScrollView name="ingredients-scroll" class="ingredients-scroll" mode="Vertical">
+                        <ui:VisualElement name="ingredients-list" class="ingredients-list" />
+                    </ui:ScrollView>
+                    <ui:VisualElement name="craft-btn-container" class="craft-btn-container">
+                        <ui:Button name="craft-btn" class="craft-btn" text="CRAFT" />
+                        <ui:VisualElement name="craft-progress-bg" class="craft-progress-bg">
+                            <ui:VisualElement name="craft-progress-fill" class="craft-progress-fill" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

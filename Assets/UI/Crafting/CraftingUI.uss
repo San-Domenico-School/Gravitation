@@ -1,7 +1,8 @@
 /* ===== ROOT OVERLAY ===== */
 .crafting-root {
-    position: absolute;
-    left: 0; top: 0; right: 0; bottom: 0;
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
     align-items: center;
     justify-content: center;
     background-color: rgba(0, 0, 0, 0.7);
@@ -9,8 +10,10 @@
 
 /* ===== MAIN WINDOW ===== */
 .crafter-window {
-    width: 900px;
-    height: 600px;
+    width: 880px;
+    max-width: 95%;
+    height: 580px;
+    max-height: 90%;
     background-color: rgb(8, 20, 40);
     border-width: 1px;
     border-color: rgb(0, 180, 220);
@@ -38,21 +41,25 @@
 }
 
 .close-btn {
-    width: 28px;
-    height: 28px;
-    font-size: 14px;
-    color: rgb(0, 229, 255);
+    width: 32px;
+    height: 32px;
     background-color: rgba(0, 100, 140, 0.3);
     border-color: rgb(0, 180, 220);
     border-width: 1px;
     border-radius: 4px;
-    padding: 0;
-    -unity-text-align: middle-center;
+    align-items: center;
+    justify-content: center;
     cursor: link;
 }
 
 .close-btn:hover {
     background-color: rgba(0, 229, 255, 0.2);
+}
+
+.close-btn-icon {
+    font-size: 14px;
+    color: rgb(0, 229, 255);
+    -unity-text-align: middle-center;
 }
 
 /* ===== CONTENT AREA (three columns) ===== */
@@ -107,6 +114,10 @@
     color: rgb(0, 229, 255);
     border-left-width: 3px;
     border-left-color: rgb(0, 229, 255);
+}
+
+.category-btn--empty {
+    opacity: 0.35;
 }
 
 /* ===== CENTER: RECIPE PANEL ===== */
@@ -263,26 +274,33 @@
 /* ===== CRAFT BUTTON + PROGRESS ===== */
 .craft-btn-container {
     margin-top: 12px;
-    position: relative;
 }
 
+/* Base label used as craft button */
 .craft-btn {
     height: 40px;
     font-size: 14px;
-    color: rgb(0, 20, 40);
-    background-color: rgb(0, 200, 220);
-    border-width: 0;
-    border-radius: 4px;
     -unity-font-style: bold;
     letter-spacing: 3px;
+    -unity-text-align: middle-center;
+    border-radius: 4px;
+    border-width: 0;
+    padding: 0;
+}
+
+/* Enabled state */
+.craft-btn--enabled {
+    color: rgb(0, 20, 40);
+    background-color: rgb(0, 200, 220);
     cursor: link;
 }
 
-.craft-btn:hover {
+.craft-btn-container:hover .craft-btn--enabled {
     background-color: rgb(0, 229, 255);
 }
 
-.craft-btn:disabled {
+/* Disabled state */
+.craft-btn--disabled {
     background-color: rgb(0, 60, 80);
     color: rgb(0, 100, 120);
     cursor: default;

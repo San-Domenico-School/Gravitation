@@ -5,8 +5,10 @@
 
             <!-- Header -->
             <ui:VisualElement name="header" class="header">
-                <ui:Label name="crafter-title" class="crafter-title" text="TIER 1 FABRICATOR" />
-                <ui:Button name="close-btn" class="close-btn" text="✕" />
+                <ui:Label name="crafter-title" class="crafter-title" text="TIER 1 FABRICATOR" picking-mode="Ignore" />
+                <ui:VisualElement name="close-btn" class="close-btn" picking-mode="Position">
+                    <ui:Label text="✕" class="close-btn-icon" picking-mode="Ignore" />
+                </ui:VisualElement>
             </ui:VisualElement>
 
             <!-- Three-column content area -->
@@ -14,13 +16,13 @@
 
                 <!-- Left: Category list -->
                 <ui:VisualElement name="category-panel" class="category-panel">
-                    <ui:Label class="panel-label" text="CATEGORIES" />
+                    <ui:Label class="panel-label" text="CATEGORIES" picking-mode="Ignore" />
                     <ui:VisualElement name="category-list" class="category-list" />
                 </ui:VisualElement>
 
                 <!-- Center: Recipe scroll list -->
                 <ui:VisualElement name="recipe-panel" class="recipe-panel">
-                    <ui:Label class="panel-label" text="ITEMS" />
+                    <ui:Label class="panel-label" text="ITEMS" picking-mode="Ignore" />
                     <ui:ScrollView name="recipe-scroll" class="recipe-scroll" mode="Vertical">
                         <ui:VisualElement name="recipe-list" class="recipe-list" />
                     </ui:ScrollView>
@@ -29,18 +31,18 @@
                 <!-- Right: Detail panel -->
                 <ui:VisualElement name="detail-panel" class="detail-panel">
                     <ui:VisualElement name="detail-icon-container" class="detail-icon-container">
-                        <ui:VisualElement name="detail-icon" class="detail-icon" />
+                        <ui:VisualElement name="detail-icon" class="detail-icon" picking-mode="Ignore" />
                     </ui:VisualElement>
-                    <ui:Label name="detail-name" class="detail-name" text="" />
-                    <ui:Label name="detail-desc" class="detail-desc" text="" />
-                    <ui:Label class="ingredients-label" text="INGREDIENTS" />
+                    <ui:Label name="detail-name" class="detail-name" text="" picking-mode="Ignore" />
+                    <ui:Label name="detail-desc" class="detail-desc" text="" picking-mode="Ignore" />
+                    <ui:Label class="ingredients-label" text="INGREDIENTS" picking-mode="Ignore" />
                     <ui:ScrollView name="ingredients-scroll" class="ingredients-scroll" mode="Vertical">
                         <ui:VisualElement name="ingredients-list" class="ingredients-list" />
                     </ui:ScrollView>
-                    <ui:VisualElement name="craft-btn-container" class="craft-btn-container">
-                        <ui:Button name="craft-btn" class="craft-btn" text="CRAFT" />
-                        <ui:VisualElement name="craft-progress-bg" class="craft-progress-bg">
-                            <ui:VisualElement name="craft-progress-fill" class="craft-progress-fill" />
+                    <ui:VisualElement name="craft-btn-container" class="craft-btn-container" picking-mode="Position">
+                        <ui:Label name="craft-btn-label" class="craft-btn craft-btn--disabled" text="CRAFT" picking-mode="Ignore" />
+                        <ui:VisualElement name="craft-progress-bg" class="craft-progress-bg" picking-mode="Ignore">
+                            <ui:VisualElement name="craft-progress-fill" class="craft-progress-fill" picking-mode="Ignore" />
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>

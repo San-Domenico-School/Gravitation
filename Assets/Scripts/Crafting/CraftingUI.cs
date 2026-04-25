@@ -10,6 +10,7 @@ public class CraftingUI : MonoBehaviour
     public static CraftingUI Instance { get; private set; }
 
     [SerializeField] private InputActionReference cancelAction;
+    [SerializeField] private PlayerInput playerInput;
 
     private const float CraftDuration = 2f;
 
@@ -58,11 +59,13 @@ public class CraftingUI : MonoBehaviour
         progressBg = root.Q("craft-progress-bg");
 
         craftBtn.clicked += OnCraftClicked;
-        root.Q<Button>("close-btn").clicked += Close;
+        var closeBtn = root.Q<Button>("close-btn");
+        closeBtn.clicked += () => { Debug.Log("[CraftingUI] Close button clicked"); Close(); };
 
         root.style.display = DisplayStyle.None;
 
         BuildCategoryButtons();
+        Debug.Log($"[CraftingUI] Start complete. root={root != null}, craftBtn={craftBtn != null}, closeBtn={closeBtn != null}");
     }
 
     private void OnEnable()
@@ -105,6 +108,8 @@ public class CraftingUI : MonoBehaviour
         UnityEngine.Cursor.lockState = CursorLockMode.None;
         UnityEngine.Cursor.visible = true;
 
+        playerInput?.actions.FindActionMap("GravityGun")?.Disable();
+
         InventorySystem.Instance.OnInventoryChanged += OnInventoryChanged;
     }
 
@@ -121,6 +126,8 @@ public class CraftingUI : MonoBehaviour
         Time.timeScale = 1f;
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
         UnityEngine.Cursor.visible = false;
+
+        playerInput?.actions.FindActionMap("GravityGun")?.Enable();
 
         InventorySystem.Instance.OnInventoryChanged -= OnInventoryChanged;
     }
@@ -158,6 +165,7 @@ public class CraftingUI : MonoBehaviour
 
     private void SelectCategory(CraftingCategory cat)
     {
+        Debug.Log($"[CraftingUI] SelectCategory: {cat}");
         selectedCategory = cat;
         selectedRecipe = null;
         RefreshCategoryButtons();

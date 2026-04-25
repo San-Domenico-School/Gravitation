@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Wiring Kit
   itemType: 1
   craftingCategory: 0
-  icon: {fileID: 0}
+  icon: {fileID: 399853286, guid: d27b7c1d0a8d341e5b40e0f870f739c5, type: 3}
   description: Wiring Kit
   isUnique: 0
   cellData: {fileID: 0}

@@ -3402,7 +3402,7 @@ MonoBehaviour:
   m_MoveRepeatRate: 0.1
   m_XRTrackingOrigin: {fileID: 0}
   m_ActionsAsset: {fileID: -944628639613478452, guid: eebb4f37cc9ea4e3c930094ee9cdae7e, type: 3}
-  m_PointAction: {fileID: 0}
+  m_PointAction: {fileID: 4914564126603217902, guid: eebb4f37cc9ea4e3c930094ee9cdae7e, type: 3}
   m_MoveAction: {fileID: 2656705327796374468, guid: eebb4f37cc9ea4e3c930094ee9cdae7e, type: 3}
   m_SubmitAction: {fileID: 0}
   m_CancelAction: {fileID: -9222299080128837353, guid: eebb4f37cc9ea4e3c930094ee9cdae7e, type: 3}
@@ -3573,7 +3573,7 @@ MonoBehaviour:
   m_PanelSettings: {fileID: 11400000, guid: 67ba41631b4244b1b9dd7c9fb321dd1d, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 8b7df22b761714f8e85162827621317c, type: 3}
-  m_SortingOrder: 0
+  m_SortingOrder: 200
   m_Position: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
@@ -3609,6 +3609,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CraftingUI
   cancelAction: {fileID: -9222299080128837353, guid: eebb4f37cc9ea4e3c930094ee9cdae7e, type: 3}
+  playerInput: {fileID: 1992434614}
 --- !u!1 &1539748643
 GameObject:
   m_ObjectHideFlags: 0
@@ -6929,6 +6930,10 @@ PrefabInstance:
     - target: {fileID: 7088014310311683327, guid: 50a94a24d68ad40db983838f382e7c6a, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7965694920477438640, guid: 50a94a24d68ad40db983838f382e7c6a, type: 3}
+      propertyPath: field of view
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 8344037559981432344, guid: 50a94a24d68ad40db983838f382e7c6a, type: 3}
       propertyPath: m_LocalPosition.x

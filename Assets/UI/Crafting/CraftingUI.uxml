@@ -1,5 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
-    <ui:VisualElement name="crafting-root" class="crafting-root">
+    <Style src="project://database/Assets/UI/Crafting/CraftingUI.uss" />
+    <ui:VisualElement name="crafting-root" class="crafting-root" picking-mode="Position">
         <ui:VisualElement name="crafter-window" class="crafter-window">
 
             <!-- Header -->

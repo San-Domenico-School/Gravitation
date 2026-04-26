@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Scout Drone Attack Upgrade
   itemType: 4
   craftingCategory: 1
-  icon: {fileID: 0}
+  icon: {fileID: 1014836072, guid: 6f25a7a96c1714c24b6436f725470321, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

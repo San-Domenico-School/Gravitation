@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Base Small Room
   itemType: 6
   craftingCategory: 0
-  icon: {fileID: 0}
+  icon: {fileID: -1045267603, guid: 15bc705718537466780dcbf8a71ab75c, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

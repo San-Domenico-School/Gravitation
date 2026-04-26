@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Reinforced Metal Ingot
   itemType: 1
   craftingCategory: 0
-  icon: {fileID: 0}
+  icon: {fileID: 12246636, guid: 0500f055458ac4ee0898020bd150016f, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

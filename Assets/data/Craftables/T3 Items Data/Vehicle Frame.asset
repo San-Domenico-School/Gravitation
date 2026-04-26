@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Vehicle Frame
   itemType: 1
   craftingCategory: 0
-  icon: {fileID: 0}
+  icon: {fileID: 923901635, guid: 6e0a3d012a7fb455fae9c5994935caa7, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

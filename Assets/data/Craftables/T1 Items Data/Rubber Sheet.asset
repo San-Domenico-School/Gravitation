@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Rubber Sheet
   itemType: 1
   craftingCategory: 0
-  icon: {fileID: 0}
+  icon: {fileID: -114771134, guid: 14482eb1517a54529b34f130f5213b4c, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Beacon
   itemType: 4
   craftingCategory: 1
-  icon: {fileID: 0}
+  icon: {fileID: -1042016000, guid: 2f6974203ec04434fbe8fa80a6ad7fc9, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

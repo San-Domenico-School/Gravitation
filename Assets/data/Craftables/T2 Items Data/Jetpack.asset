@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Jetpack
   itemType: 5
   craftingCategory: 1
-  icon: {fileID: 0}
+  icon: {fileID: 993457088, guid: 12bfab2be193a4b6093d3113c1bf7f2c, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

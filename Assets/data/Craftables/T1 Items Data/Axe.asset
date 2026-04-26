@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Axe
   itemType: 4
   craftingCategory: 1
-  icon: {fileID: 0}
+  icon: {fileID: 1765412303, guid: a9e8862c9f271494aabbf4af97578091, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

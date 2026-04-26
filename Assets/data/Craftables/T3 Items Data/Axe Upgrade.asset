@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Axe Upgrade
   itemType: 4
   craftingCategory: 1
-  icon: {fileID: 0}
+  icon: {fileID: 452583015, guid: f8723894c54c34391b648fd1bfa65f68, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

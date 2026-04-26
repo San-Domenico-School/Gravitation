@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Teleport Pad
   itemType: 6
   craftingCategory: 1
-  icon: {fileID: 0}
+  icon: {fileID: -128667102, guid: e5a6ebed6c78c4c478fc9a7137d99db2, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

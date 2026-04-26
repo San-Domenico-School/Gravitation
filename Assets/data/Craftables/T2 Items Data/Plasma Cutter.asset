@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Plasma Cutter
   itemType: 4
   craftingCategory: 1
-  icon: {fileID: 0}
+  icon: {fileID: 1803755215, guid: 19b327d2a0b8942278cdf23f9be5b302, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

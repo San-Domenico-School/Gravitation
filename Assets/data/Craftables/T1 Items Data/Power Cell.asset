@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Power Cell
   itemType: 1
   craftingCategory: 0
-  icon: {fileID: 0}
+  icon: {fileID: -1196802396, guid: bebbb12e581374eba9707d8c33be6b2d, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

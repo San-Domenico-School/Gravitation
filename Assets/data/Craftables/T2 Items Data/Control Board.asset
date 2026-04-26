@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Control Board
   itemType: 1
   craftingCategory: 0
-  icon: {fileID: 0}
+  icon: {fileID: 386594602, guid: 030c0bb8a8b0748c7b1f58e0f470512a, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

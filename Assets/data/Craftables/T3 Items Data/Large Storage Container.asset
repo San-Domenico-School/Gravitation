@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Large Storage Container
   itemType: 6
   craftingCategory: 0
-  icon: {fileID: 0}
+  icon: {fileID: 768983095, guid: 2a9a7d39d5ed94ebd87999e0ff1df427, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

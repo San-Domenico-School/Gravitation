@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Suction Grenade
   itemType: 3
   craftingCategory: 1
-  icon: {fileID: 0}
+  icon: {fileID: 1459974618, guid: 63c6e405a822645249da6f7bbd6e4434, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

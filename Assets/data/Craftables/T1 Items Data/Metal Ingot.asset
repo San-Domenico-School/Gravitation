@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Metal Ingot
   itemType: 1
   craftingCategory: 0
-  icon: {fileID: 0}
+  icon: {fileID: -1638501841, guid: 9b69b02e912ff4f589b838a1921bf362, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

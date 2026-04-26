@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Rock Pulverizer Tier 1
   itemType: 4
   craftingCategory: 1
-  icon: {fileID: 0}
+  icon: {fileID: 745917100, guid: 652901b0a29ad4f7b94d005cf936dd58, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

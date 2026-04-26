@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Jetpack Length Upgrade
   itemType: 5
   craftingCategory: 1
-  icon: {fileID: 0}
+  icon: {fileID: -507061021, guid: 751c00491118e4e7e969dc8b729220b9, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

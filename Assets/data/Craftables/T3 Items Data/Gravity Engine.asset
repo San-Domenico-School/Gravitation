@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Gravity Engine
   itemType: 1
   craftingCategory: 0
-  icon: {fileID: 0}
+  icon: {fileID: 2077915514, guid: 3566d57a922384b6da58f5a61e18a010, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

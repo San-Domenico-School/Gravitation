@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Knife
   itemType: 3
   craftingCategory: 1
-  icon: {fileID: 0}
+  icon: {fileID: -654072263, guid: d85014a57109f43398e59476b479fc4a, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

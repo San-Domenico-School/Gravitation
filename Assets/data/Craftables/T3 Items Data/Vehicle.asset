@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Vehicle
   itemType: 4
   craftingCategory: 1
-  icon: {fileID: 0}
+  icon: {fileID: -1518573595, guid: 6e858281e3d654ab282d4130db4782f0, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Glide Suit
   itemType: 5
   craftingCategory: 1
-  icon: {fileID: 0}
+  icon: {fileID: -830710690, guid: 3b123c7eea18f415e9fad1939cf0ace2, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

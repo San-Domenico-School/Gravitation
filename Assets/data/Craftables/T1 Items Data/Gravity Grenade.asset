@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Gravity Grenade
   itemType: 3
   craftingCategory: 1
-  icon: {fileID: 0}
+  icon: {fileID: 1253201232, guid: 9fef4b28eacae4a6b8aac7da2e5bd544, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Tier 3 Crafter
   itemType: 6
   craftingCategory: 1
-  icon: {fileID: 0}
+  icon: {fileID: 1683478703, guid: a46594e01097648ab8c1093407fbb7aa, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

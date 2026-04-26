@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Sled Dock
   itemType: 6
   craftingCategory: 0
-  icon: {fileID: 0}
+  icon: {fileID: 1509613958, guid: e27585aaa9264459190514da30ccd617, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

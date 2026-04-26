@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Gravity Core
   itemType: 1
   craftingCategory: 0
-  icon: {fileID: 0}
+  icon: {fileID: 1372459743, guid: d9783f3b8381c496a99f9a52dc39b14c, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Scanner
   itemType: 4
   craftingCategory: 1
-  icon: {fileID: 0}
+  icon: {fileID: 1131179537, guid: 7c79131c3704e4893aaf1c18bcaa51b6, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Scout Drone
   itemType: 4
   craftingCategory: 1
-  icon: {fileID: 0}
+  icon: {fileID: -1082407647, guid: 4b8e42d4cac514870b9de532bdae3d94, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

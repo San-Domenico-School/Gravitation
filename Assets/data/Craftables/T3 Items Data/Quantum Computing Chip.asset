@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Quantum Computing Chip
   itemType: 1
   craftingCategory: 0
-  icon: {fileID: 0}
+  icon: {fileID: 1339577725, guid: c5687b7d9206747759b8845b2999472d, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

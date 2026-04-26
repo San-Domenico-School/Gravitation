@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Grapple Hook
   itemType: 5
   craftingCategory: 1
-  icon: {fileID: 0}
+  icon: {fileID: 1540890532, guid: 5a54cb5b3cf3c469eb62b1486f4984a2, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

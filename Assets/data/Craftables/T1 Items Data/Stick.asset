@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Stick
   itemType: 1
   craftingCategory: 0
-  icon: {fileID: 0}
+  icon: {fileID: -1447202496, guid: e53bfcbd1318c49258cd97ffe787fc28, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

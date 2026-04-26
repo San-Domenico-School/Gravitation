@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Rock Pulverizer T2
   itemType: 4
   craftingCategory: 1
-  icon: {fileID: 0}
+  icon: {fileID: -1297013009, guid: a1b8a7734f8a845fcb56c1de536caf63, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}

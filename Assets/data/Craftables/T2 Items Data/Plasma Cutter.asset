@@ -19,4 +19,4 @@ MonoBehaviour:
   description: 
   isUnique: 0
   cellData: {fileID: 0}
-  worldPrefab: {fileID: 0}
+  worldPrefab: {fileID: 919132149155446097, guid: 7ad8628249afb470f84fc91ae1828902, type: 3}

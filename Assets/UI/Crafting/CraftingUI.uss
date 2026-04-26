@@ -1,0 +1,325 @@
+/* ===== ROOT OVERLAY ===== */
+.crafting-root {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* ===== MAIN WINDOW ===== */
+.crafter-window {
+    width: 880px;
+    max-width: 95%;
+    height: 580px;
+    max-height: 90%;
+    background-color: rgb(8, 20, 40);
+    border-width: 1px;
+    border-color: rgb(0, 180, 220);
+    border-radius: 6px;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ===== HEADER ===== */
+.header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background-color: rgb(4, 12, 28);
+    border-bottom-width: 1px;
+    border-bottom-color: rgb(0, 180, 220);
+}
+
+.crafter-title {
+    font-size: 16px;
+    color: rgb(0, 229, 255);
+    -unity-font-style: bold;
+    letter-spacing: 3px;
+}
+
+.close-btn {
+    width: 32px;
+    height: 32px;
+    background-color: rgba(0, 100, 140, 0.3);
+    border-color: rgb(0, 180, 220);
+    border-width: 1px;
+    border-radius: 4px;
+    align-items: center;
+    justify-content: center;
+    cursor: link;
+}
+
+.close-btn:hover {
+    background-color: rgba(0, 229, 255, 0.2);
+}
+
+.close-btn-icon {
+    font-size: 14px;
+    color: rgb(0, 229, 255);
+    -unity-text-align: middle-center;
+}
+
+/* ===== CONTENT AREA (three columns) ===== */
+.content-area {
+    flex-direction: row;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.panel-label {
+    font-size: 10px;
+    color: rgb(0, 140, 180);
+    letter-spacing: 2px;
+    padding: 8px 10px 4px 10px;
+    -unity-font-style: bold;
+}
+
+/* ===== LEFT: CATEGORY PANEL ===== */
+.category-panel {
+    width: 180px;
+    background-color: rgb(5, 15, 32);
+    border-right-width: 1px;
+    border-right-color: rgb(0, 60, 90);
+    flex-direction: column;
+}
+
+.category-list {
+    flex-direction: column;
+    padding: 4px 8px;
+}
+
+.category-btn {
+    padding: 10px 12px;
+    margin-bottom: 4px;
+    font-size: 12px;
+    color: rgb(160, 200, 220);
+    background-color: transparent;
+    border-width: 0;
+    border-radius: 4px;
+    -unity-text-align: middle-left;
+    cursor: link;
+    letter-spacing: 1px;
+}
+
+.category-btn:hover {
+    background-color: rgba(0, 180, 220, 0.12);
+    color: rgb(0, 229, 255);
+}
+
+.category-btn--selected {
+    background-color: rgba(0, 180, 220, 0.22);
+    color: rgb(0, 229, 255);
+    border-left-width: 3px;
+    border-left-color: rgb(0, 229, 255);
+}
+
+.category-btn--empty {
+    opacity: 0.35;
+}
+
+/* ===== CENTER: RECIPE PANEL ===== */
+.recipe-panel {
+    width: 240px;
+    background-color: rgb(6, 17, 35);
+    border-right-width: 1px;
+    border-right-color: rgb(0, 60, 90);
+    flex-direction: column;
+}
+
+.recipe-scroll {
+    flex-grow: 1;
+}
+
+.recipe-list {
+    flex-direction: column;
+    padding: 4px 8px;
+}
+
+.recipe-entry {
+    flex-direction: row;
+    align-items: center;
+    padding: 8px 10px;
+    margin-bottom: 3px;
+    border-radius: 4px;
+    cursor: link;
+    background-color: transparent;
+}
+
+.recipe-entry:hover {
+    background-color: rgba(0, 180, 220, 0.12);
+}
+
+.recipe-entry--selected {
+    background-color: rgba(0, 180, 220, 0.22);
+    border-left-width: 3px;
+    border-left-color: rgb(0, 229, 255);
+}
+
+.recipe-entry--uncraftable {
+    opacity: 0.45;
+}
+
+.recipe-entry__icon {
+    width: 28px;
+    height: 28px;
+    margin-right: 10px;
+    background-color: rgb(0, 40, 60);
+    border-radius: 3px;
+}
+
+.recipe-entry__name {
+    font-size: 12px;
+    color: rgb(180, 220, 240);
+    flex-grow: 1;
+    white-space: normal;
+}
+
+/* ===== RIGHT: DETAIL PANEL ===== */
+.detail-panel {
+    flex-grow: 1;
+    flex-direction: column;
+    padding: 16px;
+    background-color: rgb(7, 18, 37);
+    overflow: hidden;
+}
+
+.detail-icon-container {
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.detail-icon {
+    width: 72px;
+    height: 72px;
+    background-color: rgb(0, 30, 50);
+    border-width: 1px;
+    border-color: rgb(0, 120, 160);
+    border-radius: 6px;
+}
+
+.detail-name {
+    font-size: 15px;
+    color: rgb(0, 229, 255);
+    -unity-font-style: bold;
+    -unity-text-align: upper-center;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+}
+
+.detail-desc {
+    font-size: 11px;
+    color: rgb(130, 180, 200);
+    -unity-text-align: upper-center;
+    white-space: normal;
+    margin-bottom: 12px;
+}
+
+.ingredients-label {
+    font-size: 10px;
+    color: rgb(0, 140, 180);
+    letter-spacing: 2px;
+    -unity-font-style: bold;
+    margin-bottom: 6px;
+}
+
+.ingredients-scroll {
+    flex-grow: 1;
+    max-height: 160px;
+}
+
+.ingredients-list {
+    flex-direction: column;
+}
+
+.ingredient-row {
+    flex-direction: row;
+    align-items: center;
+    padding: 5px 0;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(0, 60, 90, 0.5);
+}
+
+.ingredient-row__icon {
+    width: 22px;
+    height: 22px;
+    margin-right: 8px;
+    background-color: rgb(0, 30, 50);
+    border-radius: 2px;
+}
+
+.ingredient-row__label {
+    font-size: 12px;
+    color: rgb(180, 220, 240);
+    flex-grow: 1;
+}
+
+.ingredient-row__check {
+    font-size: 13px;
+    -unity-font-style: bold;
+    width: 18px;
+    -unity-text-align: middle-center;
+}
+
+.ingredient-row__check--ok {
+    color: rgb(0, 229, 120);
+}
+
+.ingredient-row__check--missing {
+    color: rgb(255, 80, 80);
+}
+
+/* ===== CRAFT BUTTON + PROGRESS ===== */
+.craft-btn-container {
+    margin-top: 12px;
+}
+
+/* Base label used as craft button */
+.craft-btn {
+    height: 40px;
+    font-size: 14px;
+    -unity-font-style: bold;
+    letter-spacing: 3px;
+    -unity-text-align: middle-center;
+    border-radius: 4px;
+    border-width: 0;
+    padding: 0;
+}
+
+/* Enabled state */
+.craft-btn--enabled {
+    color: rgb(0, 20, 40);
+    background-color: rgb(0, 200, 220);
+    cursor: link;
+}
+
+.craft-btn-container:hover .craft-btn--enabled {
+    background-color: rgb(0, 229, 255);
+}
+
+/* Disabled state */
+.craft-btn--disabled {
+    background-color: rgb(0, 60, 80);
+    color: rgb(0, 100, 120);
+    cursor: default;
+    opacity: 0.6;
+}
+
+.craft-progress-bg {
+    height: 4px;
+    background-color: rgb(0, 30, 50);
+    border-radius: 2px;
+    margin-top: 6px;
+    overflow: hidden;
+}
+
+.craft-progress-fill {
+    height: 4px;
+    background-color: rgb(0, 229, 255);
+    width: 0%;
+    border-radius: 2px;
+    transition-property: width;
+    transition-duration: 0.05s;
+}

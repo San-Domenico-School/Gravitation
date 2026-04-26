@@ -96,4 +96,28 @@ public class InventorySystem : MonoBehaviour
         Array.Copy(slots, copy, slots.Length);
         return copy;
     }
+
+    public int CountItems(ItemData data)
+    {
+        int count = 0;
+        foreach (var slot in slots)
+            if (slot != null && slot.data == data) count++;
+        return count;
+    }
+
+    public bool TryConsumeItems(ItemData data, int count)
+    {
+        if (CountItems(data) < count) return false;
+        int removed = 0;
+        for (int i = 0; i < slots.Length && removed < count; i++)
+        {
+            if (slots[i] != null && slots[i].data == data)
+            {
+                slots[i] = null;
+                removed++;
+            }
+        }
+        OnInventoryChanged?.Invoke();
+        return true;
+    }
 }

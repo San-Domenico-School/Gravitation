@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41419f82c81b142269a8e3fd533f7cbd, type: 3}
+  m_Name: Reinforced Metal Ingot
+  m_EditorClassIdentifier: Assembly-CSharp::CraftingRecipe
+  result: {fileID: 11400000, guid: e4ef2b9aef4a47fe853b87f9a684663f, type: 2}
+  resultCount: 1
+  ingredients:
+  - item: {fileID: 11400000, guid: 651f186cf505437590543645cb3d7618, type: 2}
+    count: 2
+  - item: {fileID: 11400000, guid: 9d50dd66788994fcb8ab1c57b09576b1, type: 2}
+    count: 1
+  crafterTier: 3
+  category: 0

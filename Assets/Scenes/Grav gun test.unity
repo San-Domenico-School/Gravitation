@@ -6683,6 +6683,10 @@ PrefabInstance:
       propertyPath: selectionCone
       value: 
       objectReference: {fileID: 1791293025}
+    - target: {fileID: 3405676413817426469, guid: 50a94a24d68ad40db983838f382e7c6a, type: 3}
+      propertyPath: maxSelectionCount
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7088014310311683327, guid: 50a94a24d68ad40db983838f382e7c6a, type: 3}
       propertyPath: m_IsActive
       value: 1

@@ -134,7 +134,9 @@ MonoBehaviour:
   batterySystem: {fileID: 4076227802800964646}
   outOfChargeClip: {fileID: 0}
   selectedBodies: []
-  maxSelectionCount: 20
+  maxSelectionCount: 3
+  gunVisual: {fileID: 0}
+  batteryUI: {fileID: 0}
   selectionCone: {fileID: 0}
   placementCrosshair: {fileID: 4591357488637271737, guid: 1e5512efbd8134ae59c09bfd4cab8750, type: 3}
 --- !u!114 &4076227802800964646

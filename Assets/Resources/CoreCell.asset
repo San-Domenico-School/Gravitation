@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GravitonCell
   cellName: CoreCell
   maxCharge: 1000
-  passiveRechargeRate: 12
+  passiveRechargeRate: 14
   icon: {fileID: 0}
   tier: 4

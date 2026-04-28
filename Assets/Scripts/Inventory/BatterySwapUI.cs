@@ -66,15 +66,23 @@ public class BatterySwapUI : MonoBehaviour
 
         if (statusText != null) statusText.text = "";
 
-        List<InventoryItem> cells = InventorySystem.Instance.GetItemsOfType(ItemType.GravitonCell);
+        int currentTier = gunBatterySystem.CurrentCell != null ? gunBatterySystem.CurrentCell.Tier : 0;
 
-        if (cells.Count == 0)
+        List<InventoryItem> allCells = InventorySystem.Instance.GetItemsOfType(ItemType.GravitonCell);
+        List<InventoryItem> upgrades = new List<InventoryItem>();
+        foreach (var item in allCells)
         {
-            if (statusText != null) statusText.text = "No batteries in inventory.";
+            if (item.data.cellData != null && item.data.cellData.Tier > currentTier)
+                upgrades.Add(item);
+        }
+
+        if (upgrades.Count == 0)
+        {
+            if (statusText != null) statusText.text = "No upgrades available.";
             return;
         }
 
-        foreach (var item in cells)
+        foreach (var item in upgrades)
         {
             var entry = Instantiate(entryPrefab, entryContainer);
 
@@ -82,51 +90,34 @@ public class BatterySwapUI : MonoBehaviour
             if (icon != null && item.data.icon != null) icon.sprite = item.data.icon;
 
             var nameText = entry.transform.Find("Name")?.GetComponent<TextMeshProUGUI>();
-            if (nameText != null) nameText.text = item.data.itemName;
+            if (nameText != null) nameText.text = $"Install {item.data.itemName} (T{item.data.cellData.Tier})";
 
             var chargeText = entry.transform.Find("Charge")?.GetComponent<TextMeshProUGUI>();
             if (chargeText != null && item.data.cellData != null)
-                chargeText.text = $"Max: {item.data.cellData.MaxCharge}";
+                chargeText.text = $"Max: {item.data.cellData.MaxCharge}  |  +{item.data.cellData.PassiveRechargeRate}/s";
 
             var btn = entry.GetComponent<Button>();
             var capturedItem = item;
-            btn?.onClick.AddListener(() => OnSelectCell(capturedItem));
+            btn?.onClick.AddListener(() => OnInstallCell(capturedItem));
         }
     }
 
-    private void OnSelectCell(InventoryItem selectedItem)
+    private void OnInstallCell(InventoryItem selectedItem)
     {
         GravitonCell newCell = selectedItem.data.cellData;
         if (newCell == null) return;
 
-        GravitonCell previousCell = gunBatterySystem.CurrentCell;
-
-        if (previousCell != null)
+        // One-way install per GDD: never swap back, never recover the previous cell.
+        // The previous cell is permanently consumed by the upgrade.
+        int currentTier = gunBatterySystem.CurrentCell != null ? gunBatterySystem.CurrentCell.Tier : 0;
+        if (newCell.Tier <= currentTier)
         {
-            ItemData previousCellData = FindItemDataForCell(previousCell);
-            if (previousCellData != null)
-            {
-                var returnItem = new InventoryItem(previousCellData);
-                if (!InventorySystem.Instance.TryAddItem(returnItem))
-                {
-                    PickupPromptUI.ShowMessage("Inventory full — cannot swap battery.");
-                    return;
-                }
-            }
+            PickupPromptUI.ShowMessage("Cannot downgrade installed cell.");
+            return;
         }
 
         gunBatterySystem.SwapCell(newCell);
         InventorySystem.Instance.TryRemoveItem(selectedItem.uniqueInstanceId);
         Close();
-    }
-
-    private ItemData FindItemDataForCell(GravitonCell cell)
-    {
-        foreach (var slot in InventorySystem.Instance.GetAllItems())
-        {
-            if (slot != null && slot.data.itemType == ItemType.GravitonCell && slot.data.cellData == cell)
-                return slot.data;
-        }
-        return null;
     }
 }

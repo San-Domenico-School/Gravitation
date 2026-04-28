@@ -131,14 +131,22 @@ MonoBehaviour:
   AltShoot: {fileID: 1824684386832728262, guid: eebb4f37cc9ea4e3c930094ee9cdae7e, type: 3}
   SwitchMode: {fileID: -7587358385057938786, guid: eebb4f37cc9ea4e3c930094ee9cdae7e, type: 3}
   SelfSelect: {fileID: 3431384409732818134, guid: eebb4f37cc9ea4e3c930094ee9cdae7e, type: 3}
+  GravityPulse: {fileID: 6895834535894118297, guid: eebb4f37cc9ea4e3c930094ee9cdae7e, type: 3}
+  GravityLockToggle: {fileID: -7122059669106473140, guid: eebb4f37cc9ea4e3c930094ee9cdae7e, type: 3}
+  GravityFlip: {fileID: -8265881984088938657, guid: eebb4f37cc9ea4e3c930094ee9cdae7e, type: 3}
   batterySystem: {fileID: 4076227802800964646}
   outOfChargeClip: {fileID: 0}
   selectedBodies: []
-  maxSelectionCount: 3
   gunVisual: {fileID: 0}
   batteryUI: {fileID: 0}
   selectionCone: {fileID: 0}
   placementCrosshair: {fileID: 4591357488637271737, guid: 1e5512efbd8134ae59c09bfd4cab8750, type: 3}
+  pulseRadius: 8
+  pulseForce: 1500
+  pulseUpward: 0.5
+  flipRadius: 10
+  flipDuration: 4
+  testingMode: 0
 --- !u!114 &4076227802800964646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -152,6 +160,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GunBatterySystem
   defaultCell: {fileID: 11400000, guid: 046ec2c7785444338a3628354111e8ca, type: 2}
+  gravityGun: {fileID: 7916982781268827401}
   currentCharge: 0
 --- !u!114 &7929637939182915522
 MonoBehaviour:

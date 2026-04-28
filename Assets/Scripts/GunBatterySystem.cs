@@ -11,6 +11,10 @@ public class GunBatterySystem : MonoBehaviour
     [Tooltip("Reference to the default cell loaded at start")]
     private GravitonCell defaultCell;
 
+    [SerializeField]
+    [Tooltip("Optional reference to the GravityGun that owns this battery; used to read TestingMode.")]
+    private GravityGun gravityGun;
+
     private GravitonCell currentCell;
     [SerializeField] private float currentCharge;
 
@@ -21,6 +25,9 @@ public class GunBatterySystem : MonoBehaviour
 
     private void Start()
     {
+        if (gravityGun == null)
+            gravityGun = GetComponent<GravityGun>();
+
         if (defaultCell != null)
         {
             SwapCell(defaultCell);
@@ -32,6 +39,8 @@ public class GunBatterySystem : MonoBehaviour
         }
     }
 
+    private bool IsTestingMode => gravityGun != null && gravityGun.TestingMode;
+
     private void Update()
     {
         if (currentCell == null)
@@ -39,9 +48,16 @@ public class GunBatterySystem : MonoBehaviour
 
         float previousCharge = currentCharge;
 
-        // Apply passive recharge
-        currentCharge += currentCell.PassiveRechargeRate * Time.deltaTime;
-        currentCharge = Mathf.Clamp(currentCharge, 0f, currentCell.MaxCharge);
+        if (IsTestingMode)
+        {
+            currentCharge = currentCell.MaxCharge;
+        }
+        else
+        {
+            // Apply passive recharge
+            currentCharge += currentCell.PassiveRechargeRate * Time.deltaTime;
+            currentCharge = Mathf.Clamp(currentCharge, 0f, currentCell.MaxCharge);
+        }
 
         if (!Mathf.Approximately(previousCharge, currentCharge))
         {
@@ -64,6 +80,9 @@ public class GunBatterySystem : MonoBehaviour
     /// </summary>
     public bool TrySpendCharge(float amount)
     {
+        if (IsTestingMode)
+            return true;
+
         if (currentCharge >= amount)
         {
             currentCharge -= amount;

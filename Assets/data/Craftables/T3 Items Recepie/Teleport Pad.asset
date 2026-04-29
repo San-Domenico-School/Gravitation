@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41419f82c81b142269a8e3fd533f7cbd, type: 3}
+  m_Name: Teleport Pad
+  m_EditorClassIdentifier: Assembly-CSharp::CraftingRecipe
+  result: {fileID: 11400000, guid: 41fd9fe37aea441dbbe3d5285126fca3, type: 2}
+  resultCount: 2
+  ingredients:
+  - item: {fileID: 11400000, guid: 651f186cf505437590543645cb3d7618, type: 2}
+    count: 2
+  - item: {fileID: 11400000, guid: 3b7d8363158340e490f77692ee33ec6a, type: 2}
+    count: 2
+  - item: {fileID: 11400000, guid: cc2e47e4d8564797acdb9aa473e4cf5f, type: 2}
+    count: 2
+  crafterTier: 3
+  category: 1

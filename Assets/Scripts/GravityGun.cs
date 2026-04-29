@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,46 +7,47 @@ using UnityEngine.UI;
 
 /// <summary>
 /// Enables selecting GravityBody objects and applying a new gravity direction to them.
-/// Higher-tier cells unlock additional abilities: Gravity Pulse (T2), Gravity Lock (T3),
-/// and AoE Gravity Flip (T4).
+/// Higher-tier cells unlock additional modes: Pulse (T2), Lock (T3), Flip (T4).
 /// </summary>
 public class GravityGun : MonoBehaviour
 {
     // Charge costs for gun actions
     private const float COST_GRAVITY_APPLY = 15f;      // Cost to apply gravity to selected objects
-    private const float COST_GRAVITY_REMOVE = 8f;      // Cost to remove gravity
+    private const float COST_GRAVITY_REMOVE = 8f;      // Cost to remove gravity (legacy)
     private const float COST_PLAYER_SELF = 25f;        // Additional cost when player is in selection
-    private const float COST_GRAVITY_PULSE = 30f;      // Gravity Pulse (T2)
+    private const float COST_GRAVITY_PULSE = 30f;      // Gravity Pulse fire (T2)
     private const float COST_GRAVITY_LOCK = 20f;       // Gravity Lock drain per second (T3)
-    private const float COST_CORE_RESONATOR = 60f;     // AoE Gravity Flip (T4)
+    private const float COST_CORE_RESONATOR = 60f;     // Gravity Flip fire (T4)
 
-    private enum Mode
+    public enum Mode
     {
         Selection,
         GravityPlacement,
-        GravityLockActive
+        PulseMode,
+        LockMode,
+        FlipMode
     }
 
     [Header("Input")]
-    [Tooltip("Primary fire (left click). Selection: toggle select. Placement: place gravity. Lock: toggle select.")]
+    [Tooltip("Primary fire (left click). Behavior depends on current mode.")]
     public InputActionReference Shoot;
 
-    [Tooltip("Secondary fire (right click). Selection: enter Placement. Placement: back to Selection. Lock: toggle lock effect.")]
+    [Tooltip("Secondary fire (right click). Behavior depends on current mode.")]
     public InputActionReference AltShoot;
 
-    [Tooltip("(Deprecated) Mode swap is now handled by right click; this binding is no longer wired up.")]
+    [Tooltip("Switch back to basic Selection mode (default key: F).")]
     public InputActionReference SwitchMode;
 
     [Tooltip("Toggle player selection in selection mode.")]
     public InputActionReference SelfSelect;
 
-    [Tooltip("Fire Gravity Pulse (Tier 2).")]
+    [Tooltip("Enter Pulse mode (Tier 2).")]
     public InputActionReference GravityPulse;
 
-    [Tooltip("Toggle Gravity Lock mode (Tier 3).")]
+    [Tooltip("Enter Lock mode (Tier 3).")]
     public InputActionReference GravityLockToggle;
 
-    [Tooltip("Fire AoE Gravity Flip / zero-G burst (Tier 4).")]
+    [Tooltip("Enter Flip mode (Tier 4).")]
     public InputActionReference GravityFlip;
 
     [Header("Battery")]
@@ -81,10 +83,10 @@ public class GravityGun : MonoBehaviour
     [SerializeField] private float pulseForce = 1500f;
     [Tooltip("Upward bias for Gravity Pulse (Unity ExplosionForce upwardsModifier).")]
     [SerializeField] private float pulseUpward = 0.5f;
-    [Tooltip("Radius of the AoE Gravity Flip / zero-G burst.")]
-    [SerializeField] private float flipRadius = 10f;
-    [Tooltip("Duration in seconds that gravity is suspended for affected bodies.")]
+    [Tooltip("Duration in seconds that gravity is suspended for a flipped body.")]
     [SerializeField] private float flipDuration = 4f;
+    [Tooltip("Upward impulse applied to a flipped body so it visibly hovers off the ground.")]
+    [SerializeField] private float flipHoverImpulse = 6f;
 
     [Header("Testing")]
     [Tooltip("Unlocks all tiers and grants infinite charge regardless of installed cell.")]
@@ -92,7 +94,6 @@ public class GravityGun : MonoBehaviour
 
     private Mode currentMode = Mode.Selection;
     private int gravityObjectLayerMask;
-    private bool isDrained = false; // Flag to avoid spamming low charge warning
     private AudioSource audioSource;
 
     // Lock state
@@ -107,13 +108,27 @@ public class GravityGun : MonoBehaviour
         public Quaternion rotation;
     }
 
+    // ---- Public state for UI ----
     public bool TestingMode => testingMode;
+    public Mode CurrentMode => currentMode;
+    public bool IsLockActive => isLockActive;
+
+    /// <summary>Fired when the gun's mode changes.</summary>
+    public event Action<Mode> OnModeChanged;
+
+    /// <summary>Fired when the selection list changes. Passes (currentCount, maxCount).</summary>
+    public event Action<int, int> OnSelectionChanged;
+
+    /// <summary>Fired when the effective tier changes (e.g. cell installed, testing mode toggled).</summary>
+    public event Action<int> OnEffectiveTierChanged;
+
+    private int lastEffectiveTier = -1;
 
     /// <summary>
     /// Highest tier whose abilities are currently available.
-    /// 1 = base, 2 = Pulse, 3 = Lock, 4 = AoE Flip.
+    /// 1 = base, 2 = Pulse, 3 = Lock, 4 = Flip.
     /// </summary>
-    private int EffectiveTier
+    public int EffectiveTier
     {
         get
         {
@@ -130,43 +145,42 @@ public class GravityGun : MonoBehaviour
 
     private void Awake()
     {
-        // Precompute the layer mask for GravityObject.
         gravityObjectLayerMask = LayerMask.GetMask("GravityObject");
-
         if (gravityObjectLayerMask == 0)
-        {
             Debug.LogWarning("Layer 'GravityObject' not found. GravityGun raycasts will not hit anything.", this);
-        }
 
-        // Get or create AudioSource for charge cues
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
-        {
             audioSource = gameObject.AddComponent<AudioSource>();
-        }
 
-        // Find battery system if not assigned
         if (batterySystem == null)
         {
             batterySystem = GetComponent<GunBatterySystem>();
             if (batterySystem == null)
-            {
                 Debug.LogWarning("GunBatterySystem not found on this GameObject. Gun will not charge check.", this);
-            }
         }
 
-        // Register input actions here so they work even if the component starts disabled.
-        // Awake runs on disabled components; OnEnable does not.
         if (Shoot != null)              { Shoot.action.performed += OnShoot;                          Shoot.action.Enable(); }
         if (AltShoot != null)           { AltShoot.action.performed += OnAltShoot;                    AltShoot.action.Enable(); }
+        if (SwitchMode != null)         { SwitchMode.action.performed += OnSwitchToBasic;             SwitchMode.action.Enable(); }
         if (SelfSelect != null)         { SelfSelect.action.performed += OnSelfSelect;                SelfSelect.action.Enable(); }
-        if (GravityPulse != null)       { GravityPulse.action.performed += OnGravityPulse;            GravityPulse.action.Enable(); }
-        if (GravityLockToggle != null)  { GravityLockToggle.action.performed += OnGravityLockToggle;  GravityLockToggle.action.Enable(); }
-        if (GravityFlip != null)        { GravityFlip.action.performed += OnGravityFlip;              GravityFlip.action.Enable(); }
+        if (GravityPulse != null)       { GravityPulse.action.performed += OnEnterPulseMode;          GravityPulse.action.Enable(); }
+        if (GravityLockToggle != null)  { GravityLockToggle.action.performed += OnEnterLockMode;      GravityLockToggle.action.Enable(); }
+        if (GravityFlip != null)        { GravityFlip.action.performed += OnEnterFlipMode;            GravityFlip.action.Enable(); }
         Debug.Log("[GravityGun] Awake — actions registered");
 
-        // Set initial visuals
         UpdateVisuals();
+    }
+
+    private void Start()
+    {
+        if (batterySystem != null)
+            batterySystem.OnChargeChanged += OnBatteryCharge;
+
+        // Fire initial UI events.
+        FireSelectionEvent();
+        FireTierEventIfChanged();
+        OnModeChanged?.Invoke(currentMode);
     }
 
     private bool isEquipped = false;
@@ -190,17 +204,23 @@ public class GravityGun : MonoBehaviour
     {
         if (Shoot != null)              Shoot.action.performed -= OnShoot;
         if (AltShoot != null)           AltShoot.action.performed -= OnAltShoot;
+        if (SwitchMode != null)         SwitchMode.action.performed -= OnSwitchToBasic;
         if (SelfSelect != null)         SelfSelect.action.performed -= OnSelfSelect;
-        if (GravityPulse != null)       GravityPulse.action.performed -= OnGravityPulse;
-        if (GravityLockToggle != null)  GravityLockToggle.action.performed -= OnGravityLockToggle;
-        if (GravityFlip != null)        GravityFlip.action.performed -= OnGravityFlip;
-        // NOTE: not calling action.Disable() — shared actions; disabling would break any other listener.
+        if (GravityPulse != null)       GravityPulse.action.performed -= OnEnterPulseMode;
+        if (GravityLockToggle != null)  GravityLockToggle.action.performed -= OnEnterLockMode;
+        if (GravityFlip != null)        GravityFlip.action.performed -= OnEnterFlipMode;
+
+        if (batterySystem != null)
+            batterySystem.OnChargeChanged -= OnBatteryCharge;
     }
 
     private void Update()
     {
         if (isLockActive)
             HandleLockMaintenance();
+
+        // Catch tier changes (e.g. cell installed at runtime, testingMode toggled in inspector).
+        FireTierEventIfChanged();
     }
 
     private bool IsBlockedByUI()
@@ -208,26 +228,111 @@ public class GravityGun : MonoBehaviour
         return InventoryUI.Instance != null && InventoryUI.Instance.IsOpen;
     }
 
+    // ---- Mode change helpers ----
+
+    private void SetMode(Mode newMode)
+    {
+        if (currentMode == newMode) return;
+        Mode previous = currentMode;
+
+        // Leaving Lock mode while a lock is engaged → release the lock.
+        if (previous == Mode.LockMode && isLockActive)
+            EndGravityLock();
+
+        currentMode = newMode;
+        Debug.Log($"[GravityGun] Mode changed: {previous} → {currentMode} (tier {EffectiveTier})");
+        UpdateVisuals();
+        OnModeChanged?.Invoke(currentMode);
+    }
+
+    private void FireSelectionEvent()
+    {
+        OnSelectionChanged?.Invoke(selectedBodies.Count, MaxSelectionCount);
+    }
+
+    private void FireTierEventIfChanged()
+    {
+        int tier = EffectiveTier;
+        if (tier != lastEffectiveTier)
+        {
+            lastEffectiveTier = tier;
+            Debug.Log($"[GravityGun] Effective tier is now {tier} (testingMode={testingMode}).");
+            OnEffectiveTierChanged?.Invoke(tier);
+            // Selection cap may have changed.
+            FireSelectionEvent();
+        }
+    }
+
+    private void OnBatteryCharge(float current, float max)
+    {
+        // Charge changes can correspond to cell swaps; recheck tier.
+        FireTierEventIfChanged();
+    }
+
+    // ---- Mode-entry input handlers ----
+
+    private void OnSwitchToBasic(InputAction.CallbackContext ctx)
+    {
+        if (!isEquipped || IsBlockedByUI()) return;
+        SetMode(Mode.Selection);
+    }
+
+    private void OnEnterPulseMode(InputAction.CallbackContext ctx)
+    {
+        if (!isEquipped || IsBlockedByUI()) return;
+        if (EffectiveTier < 2)
+        {
+            Debug.Log("[GravityGun] Pulse mode locked — Tier 2 cell required.");
+            return;
+        }
+        SetMode(Mode.PulseMode);
+    }
+
+    private void OnEnterLockMode(InputAction.CallbackContext ctx)
+    {
+        if (!isEquipped || IsBlockedByUI()) return;
+        if (EffectiveTier < 3)
+        {
+            Debug.Log("[GravityGun] Lock mode locked — Tier 3 cell required.");
+            return;
+        }
+        SetMode(Mode.LockMode);
+    }
+
+    private void OnEnterFlipMode(InputAction.CallbackContext ctx)
+    {
+        if (!isEquipped || IsBlockedByUI()) return;
+        if (EffectiveTier < 4)
+        {
+            Debug.Log("[GravityGun] Flip mode locked — Tier 4 cell required.");
+            return;
+        }
+        SetMode(Mode.FlipMode);
+    }
+
+    // ---- Click dispatch ----
+
     private void OnShoot(InputAction.CallbackContext ctx)
     {
         if (!isEquipped || IsBlockedByUI()) return;
 
-        // No-charge fail behavior depends on mode (Selection lets you still toggle picks).
-        if (batterySystem != null && !batterySystem.HasCharge && currentMode == Mode.GravityPlacement)
-        {
-            PlayOutOfChargeAudio();
-            return;
-        }
-
         switch (currentMode)
         {
             case Mode.Selection:
-            case Mode.GravityLockActive:
+            case Mode.LockMode:
                 ToggleBodySelection();
                 break;
 
             case Mode.GravityPlacement:
-                TryPlaceGravity();
+                if (RequireCharge(0f)) TryPlaceGravity();
+                break;
+
+            case Mode.PulseMode:
+                FirePulse();
+                break;
+
+            case Mode.FlipMode:
+                FireFlipSingle();
                 break;
         }
     }
@@ -239,20 +344,20 @@ public class GravityGun : MonoBehaviour
         switch (currentMode)
         {
             case Mode.Selection:
-                currentMode = Mode.GravityPlacement;
-                UpdateVisuals();
+                SetMode(Mode.GravityPlacement);
                 break;
 
             case Mode.GravityPlacement:
-                // Placement-mode right click also acts as a "remove gravity" / cancel:
-                // rather than two confusable behaviors, return to Selection so the input
-                // scheme stays symmetrical with the user's request.
-                currentMode = Mode.Selection;
-                UpdateVisuals();
+                SetMode(Mode.Selection);
                 break;
 
-            case Mode.GravityLockActive:
+            case Mode.LockMode:
                 ToggleLockEffect();
+                break;
+
+            case Mode.PulseMode:
+            case Mode.FlipMode:
+                // Right click intentionally does nothing in these modes.
                 break;
         }
     }
@@ -260,99 +365,22 @@ public class GravityGun : MonoBehaviour
     private void OnSelfSelect(InputAction.CallbackContext ctx)
     {
         if (!isEquipped) return;
-        if (currentMode == Mode.Selection || currentMode == Mode.GravityLockActive)
-        {
+        if (currentMode == Mode.Selection || currentMode == Mode.LockMode)
             TryTogglePlayerSelection();
-        }
     }
 
-    private void OnGravityPulse(InputAction.CallbackContext ctx)
+    /// <summary>Quick "do we have any charge for placement?" gate.</summary>
+    private bool RequireCharge(float _)
     {
-        if (!isEquipped || IsBlockedByUI()) return;
-        if (EffectiveTier < 2) return;
-
-        if (batterySystem != null && !batterySystem.TrySpendCharge(COST_GRAVITY_PULSE))
+        if (batterySystem != null && !batterySystem.HasCharge)
         {
             PlayOutOfChargeAudio();
-            return;
+            return false;
         }
-
-        if (!TryRaycastDirection(out RaycastHit hit))
-            return;
-
-        Collider[] hits = Physics.OverlapSphere(hit.point, pulseRadius);
-        foreach (var c in hits)
-        {
-            Rigidbody rb = c.attachedRigidbody;
-            if (rb == null || rb.isKinematic) continue;
-            rb.AddExplosionForce(pulseForce, hit.point, pulseRadius, pulseUpward, ForceMode.Impulse);
-        }
-        Debug.Log($"[GravityGun] Gravity Pulse fired at {hit.point}. Affected {hits.Length} colliders.");
+        return true;
     }
 
-    private void OnGravityLockToggle(InputAction.CallbackContext ctx)
-    {
-        if (!isEquipped || IsBlockedByUI()) return;
-        if (EffectiveTier < 3) return;
-
-        if (currentMode == Mode.GravityLockActive)
-        {
-            // Leave Lock mode (and end any active lock).
-            if (isLockActive)
-                EndGravityLock();
-            currentMode = Mode.Selection;
-        }
-        else
-        {
-            currentMode = Mode.GravityLockActive;
-        }
-        UpdateVisuals();
-    }
-
-    private void OnGravityFlip(InputAction.CallbackContext ctx)
-    {
-        if (!isEquipped || IsBlockedByUI()) return;
-        if (EffectiveTier < 4) return;
-
-        if (batterySystem != null && !batterySystem.TrySpendCharge(COST_CORE_RESONATOR))
-        {
-            PlayOutOfChargeAudio();
-            return;
-        }
-
-        if (!TryRaycastDirection(out RaycastHit hit))
-            return;
-
-        Collider[] hits = Physics.OverlapSphere(hit.point, flipRadius, gravityObjectLayerMask);
-        var affected = new List<GravityBody>();
-        var originalDirs = new List<Vector3>();
-        foreach (var c in hits)
-        {
-            GravityBody body = c.GetComponent<GravityBody>();
-            if (body == null) continue;
-            if (affected.Contains(body)) continue;
-            affected.Add(body);
-            originalDirs.Add(body.gravityDirection);
-        }
-
-        if (affected.Count == 0) return;
-
-        GravityController.Instance?.SetGravity(affected, Vector3.zero);
-        StartCoroutine(RestoreGravityAfter(affected, originalDirs, flipDuration));
-        Debug.Log($"[GravityGun] AoE Flip fired at {hit.point}. Suspended gravity for {affected.Count} bodies for {flipDuration}s.");
-    }
-
-    private IEnumerator RestoreGravityAfter(List<GravityBody> bodies, List<Vector3> directions, float duration)
-    {
-        yield return new WaitForSeconds(duration);
-        if (GravityController.Instance == null) yield break;
-        for (int i = 0; i < bodies.Count; i++)
-        {
-            GravityBody body = bodies[i];
-            if (body == null) continue;
-            GravityController.Instance.SetGravity(body, directions[i]);
-        }
-    }
+    // ---- Mode actions ----
 
     private void TryTogglePlayerSelection()
     {
@@ -374,11 +402,13 @@ public class GravityGun : MonoBehaviour
         {
             selectedBodies.Remove(playerBody);
             Debug.Log("Player deselected");
+            FireSelectionEvent();
         }
         else if (selectedBodies.Count < MaxSelectionCount)
         {
             selectedBodies.Add(playerBody);
             Debug.Log("Player selected");
+            FireSelectionEvent();
         }
         else
         {
@@ -399,11 +429,13 @@ public class GravityGun : MonoBehaviour
         {
             selectedBodies.Remove(body);
             Debug.Log($"Deselected body: {body.name}");
+            FireSelectionEvent();
         }
         else if (selectedBodies.Count < MaxSelectionCount)
         {
             selectedBodies.Add(body);
             Debug.Log($"Selected body: {body.name}");
+            FireSelectionEvent();
         }
         else
         {
@@ -425,15 +457,11 @@ public class GravityGun : MonoBehaviour
             return;
         }
 
-        // Calculate charge cost
         float cost = COST_GRAVITY_APPLY;
         bool playerInSelection = selectedBodies.Contains(GameObject.FindWithTag("Player")?.GetComponent<GravityBody>());
         if (playerInSelection)
-        {
             cost += COST_PLAYER_SELF;
-        }
 
-        // Try to spend charge
         if (batterySystem != null && !batterySystem.TrySpendCharge(cost))
         {
             Debug.Log($"Insufficient charge. Required: {cost}, Available: {batterySystem.CurrentCharge}");
@@ -445,6 +473,75 @@ public class GravityGun : MonoBehaviour
         GravityController.Instance?.SetGravity(selectedBodies, gravityDirection);
         Debug.Log($"Placed gravity at {hit.point} with direction {gravityDirection}. Spent {cost} charge.");
     }
+
+    // ---- Pulse ----
+
+    private void FirePulse()
+    {
+        if (batterySystem != null && !batterySystem.TrySpendCharge(COST_GRAVITY_PULSE))
+        {
+            PlayOutOfChargeAudio();
+            return;
+        }
+
+        if (!TryRaycastDirection(out RaycastHit hit))
+            return;
+
+        Collider[] hits = Physics.OverlapSphere(hit.point, pulseRadius);
+        int affected = 0;
+        foreach (var c in hits)
+        {
+            Rigidbody rb = c.attachedRigidbody;
+            if (rb == null || rb.isKinematic) continue;
+            rb.AddExplosionForce(pulseForce, hit.point, pulseRadius, pulseUpward, ForceMode.Impulse);
+            affected++;
+        }
+        Debug.Log($"[GravityGun] Pulse fired at {hit.point}. Launched {affected} rigidbodies.");
+    }
+
+    // ---- Flip (single target with hover) ----
+
+    private void FireFlipSingle()
+    {
+        if (!TryRaycast(out RaycastHit hit))
+        {
+            Debug.Log("[GravityGun] Flip raycast missed a GravityObject.");
+            return;
+        }
+
+        GravityBody body = hit.collider.GetComponent<GravityBody>();
+        if (body == null) return;
+
+        if (batterySystem != null && !batterySystem.TrySpendCharge(COST_CORE_RESONATOR))
+        {
+            PlayOutOfChargeAudio();
+            return;
+        }
+
+        Vector3 originalDir = body.gravityDirection;
+        GravityController.Instance?.SetGravity(body, Vector3.zero);
+
+        Rigidbody rb = body.GetComponent<Rigidbody>();
+        if (rb != null && !rb.isKinematic)
+        {
+            // Lift opposite of the body's previous gravity. If gravity was unset, default to world up.
+            Vector3 hoverDir = originalDir.sqrMagnitude > 0.0001f ? -originalDir.normalized : Vector3.up;
+            rb.AddForce(hoverDir * flipHoverImpulse, ForceMode.Impulse);
+        }
+
+        StartCoroutine(RestoreGravityAfter(body, originalDir, flipDuration));
+        Debug.Log($"[GravityGun] Flip applied to {body.name} for {flipDuration}s; hovering and zero-G.");
+    }
+
+    private IEnumerator RestoreGravityAfter(GravityBody body, Vector3 direction, float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        if (body == null || GravityController.Instance == null) yield break;
+        GravityController.Instance.SetGravity(body, direction);
+        Debug.Log($"[GravityGun] Flip restored on {body.name}.");
+    }
+
+    // ---- Lock ----
 
     private void ToggleLockEffect()
     {
@@ -515,7 +612,6 @@ public class GravityGun : MonoBehaviour
             return;
         }
 
-        // Re-pin transforms each frame in case external code moved them.
         for (int i = 0; i < lockedBodies.Count; i++)
         {
             var lb = lockedBodies[i];
@@ -525,30 +621,23 @@ public class GravityGun : MonoBehaviour
         }
     }
 
+    // ---- Raycast helpers ----
+
     private bool TryRaycast(out RaycastHit hit)
     {
         hit = default;
-
         Camera cam = Camera.main;
-        if (cam == null)
-            return false;
-
+        if (cam == null) return false;
         Ray ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
-
         return Physics.Raycast(ray, out hit, 100f, gravityObjectLayerMask);
     }
 
     private bool TryRaycastDirection(out RaycastHit hit)
     {
         hit = default;
-
         Camera cam = Camera.main;
-        if (cam == null)
-            return false;
-
+        if (cam == null) return false;
         Ray ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
-
-        // Raycast against all layers to find gravity direction, not just GravityObject layer
         return Physics.Raycast(ray, out hit, 100f);
     }
 
@@ -564,8 +653,6 @@ public class GravityGun : MonoBehaviour
     private void PlayOutOfChargeAudio()
     {
         if (outOfChargeClip != null && audioSource != null)
-        {
             audioSource.PlayOneShot(outOfChargeClip);
-        }
     }
 }

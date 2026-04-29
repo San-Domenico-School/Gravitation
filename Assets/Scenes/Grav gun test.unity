@@ -1850,7 +1850,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9abab0a2e9ceb41b8828669f9384fe92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BatteryHUD
-  batterySystem: {fileID: 0}
+  batterySystem: {fileID: 5646963709800730614}
   chargeBarFill: {fileID: 1234669019}
   cellNameText: {fileID: 2023811637}
   chargePercentText: {fileID: 678133140}
@@ -2173,7 +2173,7 @@ MonoBehaviour:
   entryContainer: {fileID: 1448106021}
   entryPrefab: {fileID: 69544333604616225, guid: 617c047edf72b47f2a40b1c378ed1c4b, type: 3}
   statusText: {fileID: 912637057}
-  gunBatterySystem: {fileID: 0}
+  gunBatterySystem: {fileID: 5646963709800730614}
   swapBatteryAction: {fileID: 4626879050325375194, guid: eebb4f37cc9ea4e3c930094ee9cdae7e, type: 3}
   cancelAction: {fileID: -9222299080128837353, guid: eebb4f37cc9ea4e3c930094ee9cdae7e, type: 3}
 --- !u!114 &894496847
@@ -6732,6 +6732,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 50a94a24d68ad40db983838f382e7c6a, type: 3}
+--- !u!114 &5646963709800730614 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8794416079111703306, guid: 50a94a24d68ad40db983838f382e7c6a, type: 3}
+  m_PrefabInstance: {fileID: 5646963709800730613}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1163485491}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3197ab066aabd442989399febd4f8c02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GunBatterySystem
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

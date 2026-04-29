@@ -315,15 +315,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "SwapBattery",
-                    "type": "Button",
-                    "id": "405ae69f-c3e2-4852-aa0c-23e3ef93c47f",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "GravityPulse",
                     "type": "Button",
                     "id": "b1c4e201-5a6d-4f3a-9c8b-1e7d4a2b8c01",
@@ -393,17 +384,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "SelfSelect",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "0d297828-85d3-4b1d-b48c-040752ddb23a",
-                    "path": "<Keyboard>/r",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "SwapBattery",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

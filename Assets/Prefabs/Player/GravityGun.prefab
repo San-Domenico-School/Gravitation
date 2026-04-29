@@ -141,11 +141,11 @@ MonoBehaviour:
   batteryUI: {fileID: 0}
   selectionCone: {fileID: 0}
   placementCrosshair: {fileID: 4591357488637271737, guid: 1e5512efbd8134ae59c09bfd4cab8750, type: 3}
-  pulseRadius: 8
-  pulseForce: 1500
+  pulseRadius: 4
+  pulseForce: 15
   pulseUpward: 0.5
-  flipRadius: 10
   flipDuration: 4
+  flipHoverImpulse: 6
   testingMode: 0
 --- !u!114 &4076227802800964646
 MonoBehaviour:

@@ -17,6 +17,13 @@ public class GravityGun : MonoBehaviour
     private const float COST_GRAVITY_LOCK  = 20f;       // lock drain per second
     private const float COST_CORE_RESONATOR = 60f;      // flip fire
 
+    // T4 placement-strength control (scroll wheel).
+    private const float MIN_PLACEMENT_STRENGTH = 0.81f;
+    private const float MAX_PLACEMENT_STRENGTH = 30f;
+    private const float STRENGTH_STEP          = 1f;
+    private const float CONE_SCALE_MIN         = 0.3f;
+    private const float CONE_SCALE_MAX         = 2f;
+
     public enum Mode
     {
         Selection,
@@ -86,6 +93,11 @@ public class GravityGun : MonoBehaviour
     [Tooltip("Unlocks all tiers and grants infinite charge regardless of installed cell.")]
     [SerializeField] private bool testingMode = false;
 
+    // T4-only placement strength. Persists between placements; clamped on every change.
+    private float placementStrength = 9.81f;
+    private Vector3 baseConeScale = Vector3.one;
+    private bool baseConeScaleCaptured = false;
+
     private Mode currentMode = Mode.Selection;
     private int gravityObjectLayerMask;
     private AudioSource audioSource;
@@ -117,7 +129,14 @@ public class GravityGun : MonoBehaviour
         ? 4
         : (batterySystem != null && batterySystem.CurrentCell != null ? batterySystem.CurrentCell.Tier : 1);
 
-    public int MaxSelectionCount => EffectiveTier >= 2 ? 10 : 3;
+    public int MaxSelectionCount =>
+        EffectiveTier >= 4 ? 20 :
+        EffectiveTier >= 2 ? 10 :
+        3;
+
+    public float PlacementStrength => placementStrength;
+    public float MinPlacementStrength => MIN_PLACEMENT_STRENGTH;
+    public float MaxPlacementStrength => MAX_PLACEMENT_STRENGTH;
 
     public event Action<Mode> OnModeChanged;
     public event Action<int, int> OnSelectionChanged;
@@ -158,7 +177,18 @@ public class GravityGun : MonoBehaviour
 
         lastEffectiveTier = EffectiveTier;
         lastTestingMode = testingMode;
+
+        if (selectionCone != null)
+        {
+            baseConeScale = selectionCone.transform.localScale;
+            baseConeScaleCaptured = true;
+        }
+
+        if (GravityController.Instance != null)
+            placementStrength = Mathf.Clamp(GravityController.Instance.gravityStrength, MIN_PLACEMENT_STRENGTH, MAX_PLACEMENT_STRENGTH);
+
         UpdateVisuals();
+        UpdateConeScale();
     }
 
     private void Start()
@@ -166,6 +196,14 @@ public class GravityGun : MonoBehaviour
         // Re-emit at Start so listeners that subscribe in their own Awake/Start get the initial values.
         OnEffectiveTierChanged?.Invoke(EffectiveTier);
         OnSelectionChanged?.Invoke(selectedBodies.Count, MaxSelectionCount);
+
+        // GravityController.Instance may have been null in Awake on first scene load; resync here.
+        if (!baseConeScaleCaptured && selectionCone != null)
+        {
+            baseConeScale = selectionCone.transform.localScale;
+            baseConeScaleCaptured = true;
+            UpdateConeScale();
+        }
     }
 
     public void SetEquipped(bool value)
@@ -213,6 +251,42 @@ public class GravityGun : MonoBehaviour
             DrainLockCharge();
             ReapplyLockedTransforms();
         }
+
+        // T4: scroll-wheel placement strength control (placement mode only).
+        HandlePlacementStrengthScroll();
+    }
+
+    private void HandlePlacementStrengthScroll()
+    {
+        if (currentMode != Mode.GravityPlacement) return;
+        if (EffectiveTier < 4) return;
+        if (InputBlocked()) return;
+        if (Mouse.current == null) return;
+
+        float scrollY = Mouse.current.scroll.ReadValue().y;
+        if (scrollY > 0.01f)
+            AdjustPlacementStrength(STRENGTH_STEP);
+        else if (scrollY < -0.01f)
+            AdjustPlacementStrength(-STRENGTH_STEP);
+    }
+
+    private void AdjustPlacementStrength(float delta)
+    {
+        float previous = placementStrength;
+        placementStrength = Mathf.Clamp(placementStrength + delta, MIN_PLACEMENT_STRENGTH, MAX_PLACEMENT_STRENGTH);
+        if (!Mathf.Approximately(previous, placementStrength))
+        {
+            UpdateConeScale();
+            Debug.Log($"[GravityGun] Placement strength: {placementStrength:F2} ({MIN_PLACEMENT_STRENGTH}–{MAX_PLACEMENT_STRENGTH})");
+        }
+    }
+
+    private void UpdateConeScale()
+    {
+        if (selectionCone == null || !baseConeScaleCaptured) return;
+        float t = Mathf.InverseLerp(MIN_PLACEMENT_STRENGTH, MAX_PLACEMENT_STRENGTH, placementStrength);
+        float multiplier = Mathf.Lerp(CONE_SCALE_MIN, CONE_SCALE_MAX, t);
+        selectionCone.transform.localScale = baseConeScale * multiplier;
     }
 
     private void LateUpdate()
@@ -437,8 +511,23 @@ public class GravityGun : MonoBehaviour
         }
 
         Vector3 gravityDirection = -hit.normal;
-        GravityController.Instance?.SetGravity(selectedBodies, gravityDirection);
-        Debug.Log($"Placed gravity at {hit.point} with direction {gravityDirection}. Spent {cost} charge.");
+
+        if (EffectiveTier >= 4)
+        {
+            // T4: apply per-body strength to every member of the selection field.
+            for (int i = 0; i < selectedBodies.Count; i++)
+            {
+                GravityBody body = selectedBodies[i];
+                if (body == null) continue;
+                body.SetGravity(gravityDirection, placementStrength);
+            }
+            Debug.Log($"Placed gravity at {hit.point} with direction {gravityDirection}, strength {placementStrength:F2}. Spent {cost} charge.");
+        }
+        else
+        {
+            GravityController.Instance?.SetGravity(selectedBodies, gravityDirection);
+            Debug.Log($"Placed gravity at {hit.point} with direction {gravityDirection}. Spent {cost} charge.");
+        }
     }
 
     // ─── Pulse ─────────────────────────────────────────────────────────────────
@@ -620,13 +709,19 @@ public class GravityGun : MonoBehaviour
     private System.Collections.IEnumerator FlipCoroutine(GravityBody body)
     {
         Vector3 originalDir = body.gravityDirection;
+        float originalStrength = body.gravityStrength;
         Rigidbody rb = body.GetComponent<Rigidbody>();
+
+        // Hop opposite the body's own gravity (its local "up"), not world up.
+        Vector3 hopDir = originalDir.sqrMagnitude > 0.0001f
+            ? -originalDir.normalized
+            : Vector3.up;
 
         body.gravityDirection = Vector3.zero;
 
         if (rb != null && !rb.isKinematic)
         {
-            rb.AddForce(Vector3.up * flipHopImpulse, ForceMode.Impulse);
+            rb.AddForce(hopDir * flipHopImpulse, ForceMode.Impulse);
         }
 
         float elapsed = 0f;
@@ -639,7 +734,7 @@ public class GravityGun : MonoBehaviour
 
         if (body != null)
         {
-            GravityController.Instance?.SetGravity(body, originalDir);
+            body.SetGravity(originalDir, originalStrength);
         }
     }
 

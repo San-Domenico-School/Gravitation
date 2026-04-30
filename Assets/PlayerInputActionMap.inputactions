@@ -302,6 +302,33 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "GravityPulse",
+                    "type": "Button",
+                    "id": "b1a8f7c2-1e4d-4a9b-8c3e-7f5a2d6b9e01",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "GravityLockToggle",
+                    "type": "Button",
+                    "id": "c2b9e8d3-2f5e-4b0c-9d4f-8a6b3e7c0f12",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "GravityFlip",
+                    "type": "Button",
+                    "id": "d3c0f9e4-3a6f-4c1d-ae50-9b7c4f8d1a23",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -357,6 +384,39 @@
                     "processors": "",
                     "groups": "",
                     "action": "SwapBattery",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e4d1a0f5-4b7a-4d2e-bf61-ac8d5f9e2b34",
+                    "path": "<Keyboard>/g",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "GravityPulse",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f5e2b1a6-5c8b-4e3f-c072-bd9e6a0f3c45",
+                    "path": "<Keyboard>/v",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "GravityLockToggle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a6f3c2b7-6d9c-4f40-d183-ce0f7b1a4d56",
+                    "path": "<Keyboard>/b",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "GravityFlip",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

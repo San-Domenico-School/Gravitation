@@ -68,13 +68,25 @@ public class BatterySwapUI : MonoBehaviour
 
         List<InventoryItem> cells = InventorySystem.Instance.GetItemsOfType(ItemType.GravitonCell);
 
-        if (cells.Count == 0)
+        int currentTier = gunBatterySystem != null && gunBatterySystem.CurrentCell != null
+            ? gunBatterySystem.CurrentCell.Tier
+            : 0;
+
+        List<InventoryItem> upgrades = new List<InventoryItem>();
+        foreach (var item in cells)
         {
-            if (statusText != null) statusText.text = "No batteries in inventory.";
+            if (item.data.cellData == null) continue;
+            if (item.data.cellData.Tier > currentTier)
+                upgrades.Add(item);
+        }
+
+        if (upgrades.Count == 0)
+        {
+            if (statusText != null) statusText.text = "No upgrades available.";
             return;
         }
 
-        foreach (var item in cells)
+        foreach (var item in upgrades)
         {
             var entry = Instantiate(entryPrefab, entryContainer);
 
@@ -90,43 +102,17 @@ public class BatterySwapUI : MonoBehaviour
 
             var btn = entry.GetComponent<Button>();
             var capturedItem = item;
-            btn?.onClick.AddListener(() => OnSelectCell(capturedItem));
+            btn?.onClick.AddListener(() => OnInstallCell(capturedItem));
         }
     }
 
-    private void OnSelectCell(InventoryItem selectedItem)
+    private void OnInstallCell(InventoryItem selectedItem)
     {
         GravitonCell newCell = selectedItem.data.cellData;
         if (newCell == null) return;
 
-        GravitonCell previousCell = gunBatterySystem.CurrentCell;
-
-        if (previousCell != null)
-        {
-            ItemData previousCellData = FindItemDataForCell(previousCell);
-            if (previousCellData != null)
-            {
-                var returnItem = new InventoryItem(previousCellData);
-                if (!InventorySystem.Instance.TryAddItem(returnItem))
-                {
-                    PickupPromptUI.ShowMessage("Inventory full — cannot swap battery.");
-                    return;
-                }
-            }
-        }
-
         gunBatterySystem.SwapCell(newCell);
         InventorySystem.Instance.TryRemoveItem(selectedItem.uniqueInstanceId);
         Close();
-    }
-
-    private ItemData FindItemDataForCell(GravitonCell cell)
-    {
-        foreach (var slot in InventorySystem.Instance.GetAllItems())
-        {
-            if (slot != null && slot.data.itemType == ItemType.GravitonCell && slot.data.cellData == cell)
-                return slot.data;
-        }
-        return null;
     }
 }

@@ -7703,9 +7703,29 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1163485491}
     - target: {fileID: 3405676413817426469, guid: 50a94a24d68ad40db983838f382e7c6a, type: 3}
+      propertyPath: pulseForce
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 3405676413817426469, guid: 50a94a24d68ad40db983838f382e7c6a, type: 3}
+      propertyPath: GravityFlip
+      value: 
+      objectReference: {fileID: 2981511616360617263, guid: eebb4f37cc9ea4e3c930094ee9cdae7e, type: 3}
+    - target: {fileID: 3405676413817426469, guid: 50a94a24d68ad40db983838f382e7c6a, type: 3}
+      propertyPath: pulseRadius
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3405676413817426469, guid: 50a94a24d68ad40db983838f382e7c6a, type: 3}
+      propertyPath: GravityPulse
+      value: 
+      objectReference: {fileID: 6104518766016897229, guid: eebb4f37cc9ea4e3c930094ee9cdae7e, type: 3}
+    - target: {fileID: 3405676413817426469, guid: 50a94a24d68ad40db983838f382e7c6a, type: 3}
       propertyPath: selectionCone
       value: 
       objectReference: {fileID: 1791293025}
+    - target: {fileID: 3405676413817426469, guid: 50a94a24d68ad40db983838f382e7c6a, type: 3}
+      propertyPath: GravityLockToggle
+      value: 
+      objectReference: {fileID: -5903905011980607211, guid: eebb4f37cc9ea4e3c930094ee9cdae7e, type: 3}
     - target: {fileID: 7088014310311683327, guid: 50a94a24d68ad40db983838f382e7c6a, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -7754,6 +7774,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8794416079111703306, guid: 50a94a24d68ad40db983838f382e7c6a, type: 3}
+      propertyPath: gravityGun
+      value: 
+      objectReference: {fileID: 1545663718}
     - target: {fileID: 8929838131158937949, guid: 50a94a24d68ad40db983838f382e7c6a, type: 3}
       propertyPath: m_Name
       value: Player

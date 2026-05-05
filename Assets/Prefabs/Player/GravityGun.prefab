@@ -137,8 +137,8 @@ MonoBehaviour:
   batterySystem: {fileID: 4076227802800964646}
   outOfChargeClip: {fileID: 0}
   selectedBodies: []
-  pulseRadius: 8
-  pulseForce: 1200
+  pulseRadius: 4
+  pulseForce: 15
   pulseUpwardModifier: 1
   flipDuration: 4
   flipHopImpulse: 4

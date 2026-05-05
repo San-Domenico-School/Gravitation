@@ -121,9 +121,10 @@ public class GravityGun : MonoBehaviour
         public Vector3 originalGravityDir;
     }
 
-    public Mode CurrentMode => currentMode;
+    public Mode CurrentMode  => currentMode;
     public bool IsLockActive => isLockActive;
-    public bool TestingMode => testingMode;
+    public bool TestingMode  => testingMode;
+    public bool IsEquipped   => isEquipped;
 
     public int EffectiveTier => testingMode
         ? 4
@@ -138,9 +139,11 @@ public class GravityGun : MonoBehaviour
     public float MinPlacementStrength => MIN_PLACEMENT_STRENGTH;
     public float MaxPlacementStrength => MAX_PLACEMENT_STRENGTH;
 
-    public event Action<Mode> OnModeChanged;
+    public event Action<Mode>     OnModeChanged;
     public event Action<int, int> OnSelectionChanged;
-    public event Action<int> OnEffectiveTierChanged;
+    public event Action<int>      OnEffectiveTierChanged;
+    public event Action<bool>     OnEquippedChanged;
+    public event Action<float>    OnStrengthChanged;
 
     private void Awake()
     {
@@ -220,6 +223,7 @@ public class GravityGun : MonoBehaviour
             ReleaseLock("gun unequipped");
 
         UpdateVisuals();
+        OnEquippedChanged?.Invoke(value);
     }
 
     private void OnDestroy()
@@ -277,6 +281,7 @@ public class GravityGun : MonoBehaviour
         if (!Mathf.Approximately(previous, placementStrength))
         {
             UpdateConeScale();
+            OnStrengthChanged?.Invoke(placementStrength);
             Debug.Log($"[GravityGun] Placement strength: {placementStrength:F2} ({MIN_PLACEMENT_STRENGTH}–{MAX_PLACEMENT_STRENGTH})");
         }
     }

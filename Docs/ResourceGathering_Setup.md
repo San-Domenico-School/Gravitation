@@ -123,7 +123,7 @@ Repeat for T2 on a sibling GameObject:
 1. In your player HUD canvas, make a small panel for the extraction progress bar.
 2. Add a CanvasGroup, a child Image with `Image Type = Filled, Horizontal`, and an optional TMP_Text label.
 3. Add the **`ExtractorProgressUI`** component to the panel root.
-4. Drag in the ResourceExtractor (T1 or T2 — whichever is currently active; you can have one UI per tier or one shared UI that points at either).
+4. Leave the **Extractor** field empty — the UI auto-discovers every `ResourceExtractor` in the scene at startup and follows whichever one is currently extracting, so the bar keeps working when the player swaps T1 → T2. (Optional: pin to a single extractor by dragging it in if you want a per-tier UI.) If extractors are spawned after scene start, call `ExtractorProgressUI.Rebind()` to pick them up.
 
 ---
 

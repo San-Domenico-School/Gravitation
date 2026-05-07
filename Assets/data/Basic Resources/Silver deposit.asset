@@ -14,11 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemName: 'Silver Deposit  '
   itemType: 0
+  craftingCategory: 0
   icon: {fileID: 744049322, guid: 1d49461c572f94f258ad30cb01e65cb7, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}
-  worldPrefab: {fileID: 0}
-  tier: 0
-  recipe: []
-  isPlaceable: 0
+  worldPrefab: {fileID: 6257190078942936313, guid: 03f1d4fbbed08420688d7cad45024cac, type: 3}

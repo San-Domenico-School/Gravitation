@@ -565,6 +565,9 @@ public class GravityGun : MonoBehaviour
             affected++;
         }
 
+        if (CrackSpawner.Instance != null)
+            CrackSpawner.Instance.TrySpawn(hit.point, hit.normal, hit.collider);
+
         Debug.Log($"[GravityGun] Pulse fired at {origin}. Affected {affected} rigidbody(ies). Spent {COST_GRAVITY_PULSE} charge.");
     }
 

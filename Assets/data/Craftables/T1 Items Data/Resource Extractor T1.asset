@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 34b61a0247d3c4f8ebb99d0ef93be75a, type: 3}
-  m_Name: Quartz
+  m_Name: Resource Extractor T1
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemName: Quartz
-  itemType: 0
-  craftingCategory: 0
-  icon: {fileID: -1353278447, guid: fedb5c634672a4b00ab4134ec0a1e85f, type: 3}
+  itemName: Resource Extractor T1
+  itemType: 4
+  craftingCategory: 1
+  icon: {fileID: 745917100, guid: 652901b0a29ad4f7b94d005cf936dd58, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}
-  worldPrefab: {fileID: 6257190078942936313, guid: c7b309582658441908793a6cf4f0f776, type: 3}
+  worldPrefab: {fileID: 0}

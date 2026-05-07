@@ -120,4 +120,20 @@ public class InventorySystem : MonoBehaviour
         OnInventoryChanged?.Invoke();
         return true;
     }
+
+    /// <summary>
+    /// Replace the entire inventory contents at once. Used by the save system on load.
+    /// Slots beyond <c>SlotCount</c> are ignored; missing entries are treated as null.
+    /// </summary>
+    public void RestoreFromSnapshot(InventoryItem[] snapshot)
+    {
+        for (int i = 0; i < slots.Length; i++)
+        {
+            slots[i] = (snapshot != null && i < snapshot.Length) ? snapshot[i] : null;
+        }
+        OnInventoryChanged?.Invoke();
+    }
+
+    /// <summary>Total number of inventory slots.</summary>
+    public int SlotCount => slots.Length;
 }

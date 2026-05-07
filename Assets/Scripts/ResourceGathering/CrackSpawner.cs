@@ -119,4 +119,31 @@ public class CrackSpawner : MonoBehaviour
         go.name = "ResourceCrack";
         return go.GetComponent<ResourceCrack>() ?? go.AddComponent<ResourceCrack>();
     }
+
+    /// <summary>Read-only view of all live cracks in the scene. Used by the save system.</summary>
+    public IReadOnlyList<ResourceCrack> LiveCracks => liveCracks;
+
+    /// <summary>
+    /// Save-system entry point: spawn a crack at an exact pose with given resource/state.
+    /// Bypasses biome/spacing/harvestable checks since we're restoring from a known-good save.
+    /// </summary>
+    public ResourceCrack SpawnFromSave(Vector3 position, Quaternion rotation, ItemData resource, Color glowColor, BiomeType biome, bool active, float regenRemaining)
+    {
+        ResourceCrack crack = SpawnCrackInstance();
+        crack.transform.position = position;
+        crack.transform.rotation = rotation;
+        crack.RestoreFromSave(resource, glowColor, biome, active, regenRemaining);
+        liveCracks.Add(crack);
+        return crack;
+    }
+
+    /// <summary>Destroy every live crack and clear the registry. Used before applying saved state.</summary>
+    public void DestroyAllLiveCracks()
+    {
+        for (int i = liveCracks.Count - 1; i >= 0; i--)
+        {
+            if (liveCracks[i] != null) Destroy(liveCracks[i].gameObject);
+        }
+        liveCracks.Clear();
+    }
 }

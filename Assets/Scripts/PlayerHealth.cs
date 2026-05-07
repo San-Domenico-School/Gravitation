@@ -71,6 +71,16 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Forcibly set current health (clamped to [0, maxHealth]) and fire the changed event.
+    /// Used by the save system on load. Does NOT trigger Die() even if amount is 0.
+    /// </summary>
+    public void SetCurrentHealth(float amount)
+    {
+        currentHealth = Mathf.Clamp(amount, 0f, maxHealth);
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+    }
+
     private void Die()
     {
         OnPlayerDied?.Invoke();

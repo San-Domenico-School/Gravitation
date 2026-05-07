@@ -18,6 +18,10 @@ public class GunBatterySystem : MonoBehaviour
     private GravitonCell currentCell;
     [SerializeField] private float currentCharge;
 
+    // Tracks the inspector-assigned defaultCell so OnValidate can detect runtime
+    // inspector edits and hot-swap. Without this, max/recharge/UI stay on the old cell.
+    private GravitonCell trackedDefaultCell;
+
     /// <summary>
     /// Fired whenever charge changes. Passes (currentCharge, maxCharge).
     /// </summary>
@@ -37,6 +41,19 @@ public class GunBatterySystem : MonoBehaviour
             Debug.LogWarning("GunBatterySystem: No default cell assigned. Battery system non-functional.");
             currentCell = null;
         }
+        trackedDefaultCell = defaultCell;
+    }
+
+    private void OnValidate()
+    {
+        // Hot-swap when defaultCell is changed in the inspector during play mode.
+        // This ensures max charge, recharge rate, and the HUD all refresh. In edit
+        // mode (no play), Start() handles the initial assignment instead.
+        if (!Application.isPlaying) return;
+        if (defaultCell == trackedDefaultCell) return;
+        if (defaultCell == null) return;
+        trackedDefaultCell = defaultCell;
+        SwapCell(defaultCell);
     }
 
     private void Update()

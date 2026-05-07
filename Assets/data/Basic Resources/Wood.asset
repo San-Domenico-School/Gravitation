@@ -14,11 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemName: Wood
   itemType: 0
+  craftingCategory: 0
   icon: {fileID: 716927757, guid: 3bafb040777304558bbefade30710f2c, type: 3}
   description: 
   isUnique: 0
   cellData: {fileID: 0}
-  worldPrefab: {fileID: 0}
-  tier: 0
-  recipe: []
-  isPlaceable: 0
+  worldPrefab: {fileID: 6257190078942936313, guid: 6c6d2f7df1b6948d4a45814ff747095f, type: 3}

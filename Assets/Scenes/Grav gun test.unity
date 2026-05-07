@@ -6337,10 +6337,6 @@ PrefabInstance:
       propertyPath: m_UIInputModule
       value: 
       objectReference: {fileID: 1422936796}
-    - target: {fileID: 452807317426902308, guid: 50a94a24d68ad40db983838f382e7c6a, type: 3}
-      propertyPath: logExtracts
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3405676413817426469, guid: 50a94a24d68ad40db983838f382e7c6a, type: 3}
       propertyPath: batteryUI
       value: 
@@ -6349,10 +6345,6 @@ PrefabInstance:
       propertyPath: selectionCone
       value: 
       objectReference: {fileID: 519591880}
-    - target: {fileID: 3542197282938126584, guid: 50a94a24d68ad40db983838f382e7c6a, type: 3}
-      propertyPath: logExtracts
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8344037559981432344, guid: 50a94a24d68ad40db983838f382e7c6a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

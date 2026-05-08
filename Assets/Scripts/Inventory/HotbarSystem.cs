@@ -26,8 +26,8 @@ public class HotbarSystem : MonoBehaviour
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         // Persist across scenes — hotbar follows the player progression, not the scene.
-        // Place this on a ROOT GameObject in your Bootstrap scene — DDOL only works on roots.
-        DontDestroyOnLoad(gameObject);
+        // DDOL only if scene-root; otherwise rely on parent's DDOL.
+        if (transform.parent == null) DontDestroyOnLoad(gameObject);
     }
 
     private void Start()

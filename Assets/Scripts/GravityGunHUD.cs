@@ -189,6 +189,11 @@ public class GravityGunHUD : MonoBehaviour
     {
         // ── Root canvas (screen-space overlay, non-interactive) ───────────────
         canvasRoot = new GameObject("GravityGunHUD");
+        // Parent under the gun so the canvas follows the DDOL'd player. Without this,
+        // the canvas lives in whichever scene was active at Awake time and gets destroyed
+        // when that scene unloads. Screen-space overlay rendering doesn't care about
+        // the transform parent — this is purely for object lifecycle.
+        canvasRoot.transform.SetParent(transform, worldPositionStays: false);
 
         var cv = canvasRoot.AddComponent<Canvas>();
         cv.renderMode   = RenderMode.ScreenSpaceOverlay;

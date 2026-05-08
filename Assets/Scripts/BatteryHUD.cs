@@ -39,13 +39,36 @@ public class BatteryHUD : MonoBehaviour
     private float lastChargePercent = 1f;
     private float pulsingAlpha = 1f;
 
+    private void Awake()
+    {
+        // Inspector reference may point to a Player that got destroyed by PlayerPersistence
+        // (e.g., this HUD lives in a biome scene and the persistent player came from bootstrap).
+        // Re-resolve from the live persistent player at runtime.
+        if (batterySystem == null)
+        {
+            batterySystem = FindAnyObjectByType<GunBatterySystem>(FindObjectsInactive.Include);
+        }
+    }
+
     private void OnEnable()
     {
+        if (batterySystem == null)
+        {
+            // One more chance — Awake on the persistent player may not have run yet on first scene load.
+            batterySystem = FindAnyObjectByType<GunBatterySystem>(FindObjectsInactive.Include);
+        }
         if (batterySystem != null)
         {
             batterySystem.OnChargeChanged += UpdateHUD;
             // Initial update
             UpdateHUD(batterySystem.CurrentCharge, batterySystem.CurrentCell?.MaxCharge ?? 1f);
+        }
+        else
+        {
+            // No battery in scene — hide the HUD so it doesn't flash a stale "100%".
+            if (chargeBarFill != null) chargeBarFill.fillAmount = 0f;
+            if (chargePercentText != null) chargePercentText.text = "";
+            if (cellNameText != null) cellNameText.text = "";
         }
     }
 
@@ -59,8 +82,12 @@ public class BatteryHUD : MonoBehaviour
 
     private void Update()
     {
+        // No battery → don't run the pulse animation. Without this guard the bar would pulse
+        // at "critical" because ChargePercent defaults to 0 when batterySystem is missing.
+        if (batterySystem == null) return;
+
         // Handle pulsing effect at critical levels
-        float chargePercent = batterySystem?.ChargePercent ?? 0f;
+        float chargePercent = batterySystem.ChargePercent;
         if (chargePercent < 0.25f)
         {
             // Pulse using sine wave

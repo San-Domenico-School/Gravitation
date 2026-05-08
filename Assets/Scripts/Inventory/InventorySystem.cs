@@ -17,8 +17,9 @@ public class InventorySystem : MonoBehaviour
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         // Persist across scene loads. Inventory is a player-progression system, not a scene asset.
-        // Place this on a ROOT GameObject in your Bootstrap scene — DDOL only works on roots.
-        DontDestroyOnLoad(gameObject);
+        // DDOL only if scene-root; if this is a child of e.g. a "GameManager" root with its own
+        // DDOL, calling DDOL on the child just warns. Either placement works.
+        if (transform.parent == null) DontDestroyOnLoad(gameObject);
     }
 
     public bool TryAddItem(InventoryItem item)

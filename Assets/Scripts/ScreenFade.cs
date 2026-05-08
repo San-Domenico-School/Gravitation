@@ -27,6 +27,9 @@ public class ScreenFade : MonoBehaviour
         }
 
         Instance = this;
+        // Persist across scenes — used by death/respawn flow that might cross scene loads.
+        // Place ScreenFade on a ROOT GameObject; it builds its own canvas under itself.
+        DontDestroyOnLoad(gameObject);
         CreateFadeCanvas();
     }
 

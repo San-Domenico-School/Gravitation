@@ -116,6 +116,14 @@ public class SceneSaveData
 
     /// <summary>Pre-placed scene objects with a SaveableEntity component (e.g., authored chests).</summary>
     public List<SceneEntitySaveData> sceneEntities = new List<SceneEntitySaveData>();
+
+    /// <summary>
+    /// GUIDs of scene-authored SaveableEntities that have been destroyed during play
+    /// (e.g., a scene-placed WorldItem that the player picked up). These entities will
+    /// be destroyed on scene load so they stay gone. Accumulates over time and is never
+    /// cleared by CaptureScene.
+    /// </summary>
+    public List<string> removedAuthoredEntityGuids = new List<string>();
 }
 
 [Serializable]

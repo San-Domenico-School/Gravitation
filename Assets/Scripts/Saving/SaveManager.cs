@@ -49,6 +49,13 @@ public class SaveManager : MonoBehaviour
     /// </summary>
     private bool pendingFreshLoad;
 
+    /// <summary>
+    /// Set true by <see cref="ClearSaveAndReset"/>. Disables all autosave hooks so the user
+    /// can clear the file mid-play and quit without the cleared state being immediately
+    /// overwritten by the autosave-on-quit. Re-enabled after an explicit <see cref="SaveNow"/>.
+    /// </summary>
+    private bool autosaveSuppressed;
+
     /// <summary>Runtime-instantiated SaveableEntities tracked for persistence in the active scene.</summary>
     private readonly HashSet<SaveableEntity> trackedRuntimeEntities = new HashSet<SaveableEntity>();
 
@@ -107,12 +114,12 @@ public class SaveManager : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        if (autosaveOnQuit) SaveNow();
+        if (autosaveOnQuit && !autosaveSuppressed) SaveNow();
     }
 
     private void OnApplicationPause(bool paused)
     {
-        if (paused && autosaveOnPause) SaveNow();
+        if (paused && autosaveOnPause && !autosaveSuppressed) SaveNow();
     }
 
     // ---------------------------------------------------------------------- public API
@@ -131,6 +138,9 @@ public class SaveManager : MonoBehaviour
 
             string json = JsonUtility.ToJson(current, prettyPrint: true);
             File.WriteAllText(saveFilePath, json);
+
+            // Explicit save un-suppresses any prior ClearSaveAndReset.
+            autosaveSuppressed = false;
 
             if (verbose) Debug.Log($"[SaveManager] Saved {json.Length} bytes to {saveFilePath}");
         }
@@ -190,16 +200,27 @@ public class SaveManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Wipe the on-disk save file AND reset the in-memory state to a blank slate.
-    /// Useful from editor tools or a debug menu to guarantee a completely fresh start
-    /// without restarting the editor / build.
+    /// Wipe the on-disk save file AND reset in-memory <see cref="CurrentData"/> to a fresh
+    /// <see cref="GameSaveData"/>. Used by the inspector "Clear Save File" button.
+    ///
+    /// Also suppresses autosave-on-quit / autosave-on-pause / autosave-on-scene-change
+    /// until the next explicit <see cref="SaveNow"/>. Without this, exiting Play mode
+    /// would immediately re-create the save file from the player's current state, defeating
+    /// the point of the clear.
     /// </summary>
     public void ClearSaveAndReset()
     {
         DeleteSave();
         current = new GameSaveData();
-        Debug.Log("[SaveManager] In-memory save data cleared. Fresh start on next scene load.");
+        trackedRuntimeEntities.Clear();
+        autosaveSuppressed = true;
+        Debug.Log("[SaveManager] In-memory save data reset. Autosaves suppressed until next manual SaveNow.");
     }
+
+    /// <summary>True while LoadFromDisk is mid-restore (between calling LoadScene and the
+    /// destination scene's globals being applied). Other systems (PlayerPersistence) check
+    /// this so they don't fight us for player position.</summary>
+    public bool IsRestoringFromDisk => pendingFreshLoad;
 
     /// <summary>
     /// Call this immediately after instantiating a prefab that has a SaveableEntity with a
@@ -248,6 +269,7 @@ public class SaveManager : MonoBehaviour
     private void HandleSceneUnloaded(Scene scene)
     {
         if (!autosaveOnSceneChange) return;
+        if (autosaveSuppressed) return;
         // Save the scene we're leaving. Player/inventory/hotbar are global and captured too.
         try
         {
@@ -351,6 +373,8 @@ public class SaveManager : MonoBehaviour
         sd.worldItems.Clear();
         sd.placedObjects.Clear();
         sd.sceneEntities.Clear();
+        // NOTE: we do NOT clear sd.removedAuthoredEntityGuids — that's a permanent record
+        // of "things the player picked up", and it accumulates over time.
 
         // Cracks
         if (CrackSpawner.Instance != null)
@@ -371,19 +395,10 @@ public class SaveManager : MonoBehaviour
             }
         }
 
-        // WorldItems on the ground (but skip ones inside the player's pickup range that are
-        // attached to a SaveableEntity — those are saved through the entity path).
-        foreach (var wi in UnityEngine.Object.FindObjectsByType<WorldItem>(FindObjectsSortMode.None))
-        {
-            if (wi == null || wi.itemData == null) continue;
-            if (wi.GetComponent<SaveableEntity>() != null) continue; // handled by the entity path
-            sd.worldItems.Add(new WorldItemSaveData
-            {
-                position = wi.transform.position,
-                rotation = wi.transform.rotation,
-                itemId = wi.itemData.SaveId
-            });
-        }
+        // We only save WorldItems that were spawned at runtime (e.g. items the player drops).
+        // Those are tracked through SaveableEntity + PrefabRegistry. Plain WorldItems
+        // authored in the scene are NOT saved here — they live in the .unity file. Their
+        // "I was picked up" state is tracked via SaveableEntity (see removedAuthoredEntityGuids).
 
         // SaveableEntities — split into runtime-spawned (placedObjects) and scene-baked (sceneEntities).
         foreach (var ent in UnityEngine.Object.FindObjectsByType<SaveableEntity>(FindObjectsSortMode.None))
@@ -412,6 +427,19 @@ public class SaveManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Called by <see cref="SaveableEntity.MarkDestroyed"/> when a scene-authored
+    /// SaveableEntity is destroyed during play (e.g., a WorldItem-with-SaveableEntity got
+    /// picked up). Records the GUID so the entity stays gone across save/load cycles.
+    /// </summary>
+    public void NotifyAuthoredEntityDestroyed(string sceneName, string entityGuid)
+    {
+        if (string.IsNullOrEmpty(entityGuid)) return;
+        var sd = current.GetOrCreateScene(sceneName);
+        if (!sd.removedAuthoredEntityGuids.Contains(entityGuid))
+            sd.removedAuthoredEntityGuids.Add(entityGuid);
+    }
+
     // ---------------------------------------------------------------------- restore
 
     /// <summary>
@@ -436,21 +464,10 @@ public class SaveManager : MonoBehaviour
             }
         }
 
-        // WorldItems
-        foreach (var wi in UnityEngine.Object.FindObjectsByType<WorldItem>(FindObjectsSortMode.None))
-        {
-            if (wi == null) continue;
-            if (wi.GetComponent<SaveableEntity>() != null) continue; // entity-managed
-            UnityEngine.Object.Destroy(wi.gameObject);
-        }
-        foreach (var wis in sd.worldItems)
-        {
-            ItemData itemData = ItemDatabase.Instance.GetById(wis.itemId);
-            if (itemData == null || itemData.worldPrefab == null) continue;
-            var go = UnityEngine.Object.Instantiate(itemData.worldPrefab, wis.position, wis.rotation);
-            var wi = go.GetComponent<WorldItem>();
-            if (wi != null) wi.itemData = itemData;
-        }
+        // Plain WorldItems (no SaveableEntity) are scene-authored content. We do NOT touch
+        // them on load — they live in the .unity file and re-appear naturally. To track
+        // "the player picked this up", attach a SaveableEntity with a baked GUID (see
+        // SaveableEntity inspector context menu) and the item will stay gone on reload.
 
         // SaveableEntities — handle runtime-spawned and scene-baked separately.
         var allEntities = UnityEngine.Object.FindObjectsByType<SaveableEntity>(FindObjectsSortMode.None);
@@ -461,6 +478,18 @@ public class SaveManager : MonoBehaviour
             if (ent != null && ent.IsRuntimeInstance) UnityEngine.Object.Destroy(ent.gameObject);
         }
         trackedRuntimeEntities.Clear();
+
+        // 1b. Destroy any scene-authored entities that were picked-up / removed during prior play.
+        if (sd.removedAuthoredEntityGuids != null && sd.removedAuthoredEntityGuids.Count > 0)
+        {
+            foreach (var ent in allEntities)
+            {
+                if (ent == null || ent.IsRuntimeInstance) continue;
+                if (string.IsNullOrEmpty(ent.EntityGuid)) continue;
+                if (sd.removedAuthoredEntityGuids.Contains(ent.EntityGuid))
+                    UnityEngine.Object.Destroy(ent.gameObject);
+            }
+        }
         foreach (var po in sd.placedObjects)
         {
             var prefab = PrefabRegistry.Instance.GetPrefab(po.prefabId);

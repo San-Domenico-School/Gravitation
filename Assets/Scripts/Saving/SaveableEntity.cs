@@ -39,6 +39,23 @@ public class SaveableEntity : MonoBehaviour
         entityGuid = guid;
     }
 
+    /// <summary>
+    /// Call this BEFORE destroying a scene-authored SaveableEntity (e.g., right before
+    /// <c>Destroy(gameObject)</c> when a WorldItem-with-SaveableEntity is picked up).
+    /// Tells SaveManager to remember this entity is gone so it stays gone across saves.
+    ///
+    /// No-op for runtime-instantiated entities (those vanish naturally — no record needed).
+    /// </summary>
+    public void MarkDestroyed()
+    {
+        markedDestroyed = true;
+        if (IsRuntimeInstance) return; // runtime instances aren't re-spawned, so nothing to track
+        if (string.IsNullOrEmpty(entityGuid)) return;
+        if (SaveManager.Instance == null) return;
+        string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        SaveManager.Instance.NotifyAuthoredEntityDestroyed(sceneName, entityGuid);
+    }
+
     /// <summary>Snapshot all ISaveable components on this object into a single JSON blob.</summary>
     public string CaptureState()
     {

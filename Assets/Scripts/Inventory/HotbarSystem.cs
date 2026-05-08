@@ -23,8 +23,11 @@ public class HotbarSystem : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this) { Destroy(this); return; }
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
+        // Persist across scenes — hotbar follows the player progression, not the scene.
+        // Place this on a ROOT GameObject in your Bootstrap scene — DDOL only works on roots.
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()

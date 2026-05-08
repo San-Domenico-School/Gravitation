@@ -11,9 +11,11 @@ public class CraftingSystem : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this) { Destroy(this); return; }
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
-        Debug.Log("awake on crafting system");
+        // Recipes are static; CraftingSystem persists across scenes.
+        // Place this on a ROOT GameObject in your Bootstrap scene — DDOL only works on roots.
+        DontDestroyOnLoad(gameObject);
     }
 
     public List<CraftingRecipe> GetRecipesForTier(int tier)

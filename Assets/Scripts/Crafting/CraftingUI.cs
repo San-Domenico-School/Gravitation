@@ -43,9 +43,12 @@ public class CraftingUI : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this) { Destroy(this); return; }
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         document = GetComponent<UIDocument>();
+        // Persist across scenes so the crafting UIDocument is always available.
+        // Place this on a ROOT GameObject (typically the UIDocument GameObject itself, which is already a root).
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()

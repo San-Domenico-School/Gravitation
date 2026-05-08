@@ -63,6 +63,12 @@ public class WorldItem : MonoBehaviour
         {
             isInRange = false;
             OnItemOutOfRange?.Invoke(this);
+
+            // If this WorldItem opted into save tracking via SaveableEntity, tell the save
+            // system "this scene-authored item is gone now" so it stays gone across reloads.
+            var saveable = GetComponent<SaveableEntity>();
+            if (saveable != null) saveable.MarkDestroyed();
+
             Destroy(gameObject);
         }
         else

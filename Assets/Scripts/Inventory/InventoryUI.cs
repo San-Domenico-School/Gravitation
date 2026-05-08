@@ -39,7 +39,13 @@ public class InventoryUI : MonoBehaviour
 
     private void Awake()
     {
+        // Singleton + DDOL — InventoryUI persists across scene loads.
+        // IMPORTANT: this script must be on the ROOT of its UI hierarchy (typically the Canvas
+        // GameObject itself). DDOL on a child would orphan it from its UI parent.
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
+        DontDestroyOnLoad(gameObject);
+
         slotUIs = new SlotUI[SlotCount];
         for (int i = 0; i < SlotCount; i++)
         {

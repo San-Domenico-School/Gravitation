@@ -22,6 +22,9 @@ public class PickupPromptUI : MonoBehaviour
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         if (canvasGroup != null) canvasGroup.alpha = 0f;
+        // Persist across scenes — pickup prompts are global UX.
+        // Place this on a ROOT GameObject (typically the Canvas root holding the prompt).
+        DontDestroyOnLoad(gameObject);
     }
 
     private void OnEnable()

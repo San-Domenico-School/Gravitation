@@ -12,8 +12,13 @@ public class InventorySystem : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this) { Destroy(this); return; }
+        // Singleton: if a duplicate exists, destroy the new one entirely (GameObject + all siblings).
+        // Use a Bootstrap scene with one InventorySystem to avoid this firing.
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
+        // Persist across scene loads. Inventory is a player-progression system, not a scene asset.
+        // Place this on a ROOT GameObject in your Bootstrap scene — DDOL only works on roots.
+        DontDestroyOnLoad(gameObject);
     }
 
     public bool TryAddItem(InventoryItem item)

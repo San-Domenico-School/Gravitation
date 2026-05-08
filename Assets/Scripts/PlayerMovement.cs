@@ -19,8 +19,14 @@ public class PlayerMovement : MonoBehaviour
     public InputActionReference Jump;
 
     [Header("Movement Settings")]
-    [Tooltip("Speed of movement.")]
+    [Tooltip("Top speed when moving.")]
     public float moveSpeed = 10f;
+
+    [Tooltip("How quickly the player reaches top speed (m/s²).")]
+    public float acceleration = 50f;
+
+    [Tooltip("How quickly the player brakes to a stop (m/s²).")]
+    public float deceleration = 60f;
 
     [Tooltip("Force applied when jumping.")]
     public float jumpForce = 5f;
@@ -142,11 +148,15 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 moveDir = forward * moveInput.y + right * moveInput.x;
 
-        // Apply movement force.
-        if (moveDir != Vector3.zero)
-        {
-            rb.AddForce(moveDir * moveSpeed, ForceMode.Acceleration);
-        }
+        // Velocity-targeting movement: push toward the desired flat velocity each frame.
+        // This eliminates the "ice" feel caused by unchecked momentum.
+        Vector3 desiredFlatVelocity = moveDir * moveSpeed;
+        Vector3 currentFlatVelocity = Vector3.ProjectOnPlane(rb.linearVelocity, gravityDir);
+        Vector3 velocityError = desiredFlatVelocity - currentFlatVelocity;
+
+        float accelRate = (moveDir.magnitude > 0.01f) ? acceleration : deceleration;
+        Vector3 velocityChange = Vector3.ClampMagnitude(velocityError, accelRate * Time.fixedDeltaTime);
+        rb.AddForce(velocityChange, ForceMode.VelocityChange);
 
         // Handle jumping - process jump request if grounded.
         if (jumpRequested)

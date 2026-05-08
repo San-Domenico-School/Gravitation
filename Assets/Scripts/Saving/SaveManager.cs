@@ -190,6 +190,18 @@ public class SaveManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Wipe the on-disk save file AND reset the in-memory state to a blank slate.
+    /// Useful from editor tools or a debug menu to guarantee a completely fresh start
+    /// without restarting the editor / build.
+    /// </summary>
+    public void ClearSaveAndReset()
+    {
+        DeleteSave();
+        current = new GameSaveData();
+        Debug.Log("[SaveManager] In-memory save data cleared. Fresh start on next scene load.");
+    }
+
+    /// <summary>
     /// Call this immediately after instantiating a prefab that has a SaveableEntity with a
     /// <c>prefabId</c>. SaveManager will track it and persist its position + ISaveable state.
     /// </summary>

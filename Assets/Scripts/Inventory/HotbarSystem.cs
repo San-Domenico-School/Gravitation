@@ -23,8 +23,11 @@ public class HotbarSystem : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this) { Destroy(this); return; }
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
+        // Persist across scenes — hotbar follows the player progression, not the scene.
+        // DDOL only if scene-root; otherwise rely on parent's DDOL.
+        if (transform.parent == null) DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
@@ -86,5 +89,24 @@ public class HotbarSystem : MonoBehaviour
     {
         for (int i = 0; i < hotbarSlots.Length; i++) hotbarSlots[i] = null;
         OnHotbarChanged?.Invoke();
+    }
+
+    /// <summary>Total number of hotbar slots (5).</summary>
+    public int SlotCount => hotbarSlots.Length;
+
+    /// <summary>
+    /// Replaces all hotbar assignments + selected index at once. Used by the save system.
+    /// Caller is responsible for passing already-rehydrated InventoryItems whose
+    /// uniqueInstanceId matches an item currently in the InventorySystem.
+    /// </summary>
+    public void RestoreFromSnapshot(InventoryItem[] snapshot, int selectedIndex)
+    {
+        for (int i = 0; i < hotbarSlots.Length; i++)
+        {
+            hotbarSlots[i] = (snapshot != null && i < snapshot.Length) ? snapshot[i] : null;
+        }
+        SelectedIndex = Mathf.Clamp(selectedIndex, 0, hotbarSlots.Length - 1);
+        OnHotbarChanged?.Invoke();
+        OnSelectionChanged?.Invoke();
     }
 }

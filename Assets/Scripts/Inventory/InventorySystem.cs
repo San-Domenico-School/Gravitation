@@ -12,8 +12,14 @@ public class InventorySystem : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this) { Destroy(this); return; }
+        // Singleton: if a duplicate exists, destroy the new one entirely (GameObject + all siblings).
+        // Use a Bootstrap scene with one InventorySystem to avoid this firing.
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
+        // Persist across scene loads. Inventory is a player-progression system, not a scene asset.
+        // DDOL only if scene-root; if this is a child of e.g. a "GameManager" root with its own
+        // DDOL, calling DDOL on the child just warns. Either placement works.
+        if (transform.parent == null) DontDestroyOnLoad(gameObject);
     }
 
     public bool TryAddItem(InventoryItem item)
@@ -120,4 +126,20 @@ public class InventorySystem : MonoBehaviour
         OnInventoryChanged?.Invoke();
         return true;
     }
+
+    /// <summary>
+    /// Replace the entire inventory contents at once. Used by the save system on load.
+    /// Slots beyond <c>SlotCount</c> are ignored; missing entries are treated as null.
+    /// </summary>
+    public void RestoreFromSnapshot(InventoryItem[] snapshot)
+    {
+        for (int i = 0; i < slots.Length; i++)
+        {
+            slots[i] = (snapshot != null && i < snapshot.Length) ? snapshot[i] : null;
+        }
+        OnInventoryChanged?.Invoke();
+    }
+
+    /// <summary>Total number of inventory slots.</summary>
+    public int SlotCount => slots.Length;
 }

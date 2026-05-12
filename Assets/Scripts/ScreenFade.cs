@@ -27,6 +27,9 @@ public class ScreenFade : MonoBehaviour
         }
 
         Instance = this;
+        // Persist across scenes — used by death/respawn flow that might cross scene loads.
+        // DDOL only if scene-root; otherwise rely on parent's DDOL.
+        if (transform.parent == null) DontDestroyOnLoad(gameObject);
         CreateFadeCanvas();
     }
 

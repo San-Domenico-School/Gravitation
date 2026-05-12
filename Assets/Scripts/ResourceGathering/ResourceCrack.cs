@@ -49,6 +49,10 @@ public class ResourceCrack : MonoBehaviour
     public Color GlowColor => glowColor;
     public BiomeType Biome => biome;
     public bool CanExtract => isActive && resource != null;
+    public bool IsActive => isActive;
+    public float RegenSeconds => regenSeconds;
+    /// <summary>Seconds left on the regen timer, or 0 if currently active.</summary>
+    public float RegenRemaining => isActive ? 0f : Mathf.Max(0f, regenSeconds - (Time.time - regenStartTime));
     public float RegenProgress => isActive ? 1f : Mathf.Clamp01((Time.time - regenStartTime) / Mathf.Max(0.001f, regenSeconds));
 
     public event Action<ResourceCrack> OnExtracted;
@@ -61,6 +65,28 @@ public class ResourceCrack : MonoBehaviour
         this.biome = biome;
         BuildVisualIfNeeded();
         ApplyState(true);
+    }
+
+    /// <summary>
+    /// Save-system entry point: initialize the crack and force it into a specific
+    /// active/regenerating state with a specific remaining regen time.
+    /// </summary>
+    public void RestoreFromSave(ItemData resource, Color glowColor, BiomeType biome, bool active, float regenRemaining)
+    {
+        this.resource = resource;
+        this.glowColor = glowColor;
+        this.biome = biome;
+        BuildVisualIfNeeded();
+        if (active)
+        {
+            ApplyState(true);
+        }
+        else
+        {
+            // Time.time - regenStartTime should equal (regenSeconds - regenRemaining)
+            regenStartTime = Time.time - Mathf.Max(0f, regenSeconds - regenRemaining);
+            ApplyState(false);
+        }
     }
 
     public bool TryExtract(int amount, out int actuallyAdded)

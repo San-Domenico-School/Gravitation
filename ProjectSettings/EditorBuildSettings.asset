@@ -4,6 +4,12 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Biome 1.unity
+    guid: 501fc031e6f4d4de6870ec4f64b36777
+  - enabled: 1
+    path: Assets/Scenes/Grav gun test.unity
+    guid: 76899cc05d1bb47b7be65adfbe0e0892
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

@@ -81,6 +81,20 @@ public class InventorySystem : MonoBehaviour
 
     public InventoryItem GetItemInSlot(int slotIndex) => slots[slotIndex];
 
+    /// <summary>
+    /// Places an item directly into a specific slot. Returns false if the slot is
+    /// out of range or already occupied. Used when dropping an equipment-dragged item
+    /// onto a specific inventory slot.
+    /// </summary>
+    public bool TrySetSlot(int slot, InventoryItem item)
+    {
+        if (slot < 0 || slot >= slots.Length) return false;
+        if (slots[slot] != null) return false;
+        slots[slot] = item;
+        OnInventoryChanged?.Invoke();
+        return true;
+    }
+
     public bool TryMoveItem(int fromSlot, int toSlot)
     {
         if (fromSlot < 0 || fromSlot >= slots.Length || toSlot < 0 || toSlot >= slots.Length)

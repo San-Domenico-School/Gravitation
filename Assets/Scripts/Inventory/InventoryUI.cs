@@ -30,6 +30,84 @@ public class InventoryUI : MonoBehaviour
 
     public bool IsOpen => isOpen;
 
+    // ── Equipment drag support ────────────────────────────────────────────────
+    // When dragging an item that originated from an equipment slot (not inventory),
+    // we track it separately so we know to return it to inventory on cancel rather
+    // than no-op (it is no longer in any inventory slot while in-flight).
+    private bool isEquipmentDrag;
+    private InventoryItem equipmentDraggedItem;
+
+    /// <summary>True while any drag is active (from inventory or equipment slot).</summary>
+    public bool IsDragging => dragSourceSlot >= 0 || isEquipmentDrag;
+
+    /// <summary>Returns the item currently being dragged, regardless of source.</summary>
+    public InventoryItem GetDraggedItem()
+    {
+        if (isEquipmentDrag) return equipmentDraggedItem;
+        if (dragSourceSlot >= 0) return InventorySystem.Instance.GetItemInSlot(dragSourceSlot);
+        return null;
+    }
+
+    /// <summary>
+    /// Starts a drag with an item that has already been removed from its equipment slot.
+    /// Caller must have already called EquipmentSystem.TakeFromSlot.
+    /// </summary>
+    public void StartDragFromEquipment(InventoryItem item)
+    {
+        if (item == null) return;
+        if (dragSourceSlot >= 0) CancelDrag();   // cancel any existing inventory drag first
+        isEquipmentDrag = true;
+        equipmentDraggedItem = item;
+        if (cursorIcon != null)
+        {
+            cursorIcon.sprite = item.data.icon;
+            cursorIcon.gameObject.SetActive(true);
+            cursorIcon.rectTransform.position = Mouse.current.position.ReadValue();
+        }
+    }
+
+    /// <summary>
+    /// Ends the drag and removes the item from its source (inventory slot or equipment).
+    /// Call this when the item is being "picked up" by an equipment slot.
+    /// </summary>
+    public void ConsumeDraggedItem()
+    {
+        if (dragSourceSlot >= 0)
+        {
+            var item = InventorySystem.Instance.GetItemInSlot(dragSourceSlot);
+            if (item != null) InventorySystem.Instance.TryRemoveItem(item.uniqueInstanceId);
+            dragSourceSlot = -1;
+        }
+        else if (isEquipmentDrag)
+        {
+            isEquipmentDrag = false;
+            equipmentDraggedItem = null;
+        }
+        if (cursorIcon != null) cursorIcon.gameObject.SetActive(false);
+        Refresh();
+    }
+
+    /// <summary>
+    /// Cancels any active drag. Equipment-sourced items are returned to the bag.
+    /// </summary>
+    public void CancelDragPublic()
+    {
+        if (isEquipmentDrag)
+        {
+            if (equipmentDraggedItem != null)
+                InventorySystem.Instance.TryAddItem(equipmentDraggedItem);
+            isEquipmentDrag = false;
+            equipmentDraggedItem = null;
+            if (cursorIcon != null) cursorIcon.gameObject.SetActive(false);
+            Refresh();
+        }
+        else
+        {
+            CancelDrag();
+        }
+    }
+    // ── End equipment drag support ────────────────────────────────────────────
+
     private const int SlotCount = 48;
     private SlotUI[] slotUIs;
     private bool isOpen;
@@ -113,7 +191,7 @@ public class InventoryUI : MonoBehaviour
 
     private void CloseInventory()
     {
-        if (dragSourceSlot >= 0) CancelDrag();
+        CancelDragPublic(); // handles both inventory and equipment drags
         isOpen = false;
         inventoryPanel.SetActive(false);
         Time.timeScale = 1f;
@@ -134,6 +212,20 @@ public class InventoryUI : MonoBehaviour
             cursorIcon.rectTransform.position = Mouse.current.position.ReadValue();
             if (Mouse.current.leftButton.wasPressedThisFrame && !IsPointerOverSlot())
                 CancelDrag();
+        }
+        // Equipment-sourced drag: keep cursor icon moving; cancel on click-off-UI.
+        else if (isEquipmentDrag && cursorIcon != null)
+        {
+            cursorIcon.rectTransform.position = Mouse.current.position.ReadValue();
+            if (Mouse.current.leftButton.wasPressedThisFrame && !IsPointerOverSlot())
+            {
+                // Return to bag.
+                if (equipmentDraggedItem != null)
+                    InventorySystem.Instance.TryAddItem(equipmentDraggedItem);
+                isEquipmentDrag = false;
+                equipmentDraggedItem = null;
+                cursorIcon.gameObject.SetActive(false);
+            }
         }
     }
 
@@ -185,7 +277,23 @@ public class InventoryUI : MonoBehaviour
 
     private void OnSlotClicked(int slotIndex)
     {
-        Debug.Log($"[InventoryUI] OnSlotClicked slot={slotIndex} dragActive={dragSourceSlot >= 0}");
+        Debug.Log($"[InventoryUI] OnSlotClicked slot={slotIndex} dragActive={dragSourceSlot >= 0} equipDrag={isEquipmentDrag}");
+
+        // ── Equipment drag drop onto inventory slot ───────────────────────────
+        if (isEquipmentDrag)
+        {
+            // Try to land in the specific slot; fall back to first free slot.
+            if (!InventorySystem.Instance.TrySetSlot(slotIndex, equipmentDraggedItem))
+                InventorySystem.Instance.TryAddItem(equipmentDraggedItem);
+
+            isEquipmentDrag = false;
+            equipmentDraggedItem = null;
+            if (cursorIcon != null) cursorIcon.gameObject.SetActive(false);
+            Refresh();
+            return;
+        }
+
+        // ── Normal inventory drag ─────────────────────────────────────────────
         if (dragSourceSlot < 0)
         {
             var item = InventorySystem.Instance.GetItemInSlot(slotIndex);
